@@ -1,0 +1,194 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+
+  <!-- ======= Sidebar ======= -->
+<head>
+  <style>
+    .image{
+      display: flex;
+      justify-content: space-between;
+    }    
+    .description{
+      display:flex;
+      justify-content: space-between;
+    }
+    .heading{
+      display:flex;
+      justify-content: space-between;
+    }
+    
+    .heading input{
+      border-radius: 10px;
+      padding:5px 10px;
+      width: 200px;
+      text-align: center;
+      background-color: rgb(255, 255, 255);
+      border: 1px solid rgb(11, 9, 9);
+      color:rgb(0, 0, 0);
+      margin-top: 5px;
+    }
+    .description textarea{
+      border-radius: 10px;
+      width: 200px;
+      text-align: center;
+      background-color: rgb(255, 255, 255);
+      border: 1px solid rgb(0, 0, 0);
+      color:rgb(0, 0, 0);
+      margin-top:5px ;
+
+    }
+    .submit{
+      border-radius: 10px;
+      padding:5px 10px;
+      width: 100px;
+      color:white;
+      background-color: rgb(11, 135, 251);
+      border: 1px solid grey;
+      font-size: 14px;
+    }
+
+    .last_buttons{
+        border-radius: 8px;
+        border: none;
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+    }
+    .update_button{
+        width: 10%;
+        background-color: rgb(30, 87, 30);
+        color: white;
+    }
+    .cancel_button{
+        width: 10%;
+        background-color: rgb(92, 29, 29);
+        color: white;
+    }    
+    .update_button:hover{
+        width: 10%;
+        background-color: rgb(42, 180, 42);
+        color: white;
+    }
+    .cancel_button:hover{
+        width: 10%;
+        background-color: rgb(226, 226, 226);
+        color: white;
+    }
+    .control{
+      height: 50%;
+      padding:20px;
+      border-radius: 10px;
+      width: 200px;
+      background-color: rgb(255, 255, 255);
+      color: rgb(255, 255, 255);
+      border: 1px solid rgb(0, 0, 0);
+    }
+    .control:hover{
+      background-color: rgb(80, 79, 79);
+      color: rgb(255, 255, 255);
+    }
+    hr{
+      background-color: black;
+    }
+  </style>
+</head>
+
+  <main id="main" class="main" style="background-color: rgb(255, 255, 255);">
+    <div class="pagetitle">
+      <h1 style="color: white;">Edit Banner</h1>
+    </div><!-- End Page Title -->
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12" >
+                <div class="card" style="background-color:rgba(255, 255, 255) ;border: 2px solid rgb(0, 0, 0);border-radius: 10px;">
+                    <div class="card-body" >
+                      <!-- banner 1 control -->
+                      <form action="/admin_edit_banner" method="POST" enctype="multipart/form-data" style="display: flex;justify-content: space-between;">
+                        {% csrf_token %}
+                          <input type="text" name="banner" value="1" style="display: none;">
+                          <div style="display: flex;justify-content: center;padding: 20px;">
+                              <img src="/media/{{banner1.image}}"  width="350px;" height="150px"  style="border-radius: 30px;border: 1px solid rgb(0, 0, 0);">
+                          </div>  
+                          <div style="background-color: rgb(255, 255, 255);color: black;font-size: 12px;width: 100%;padding: 10px;margin:0px 100px;">
+                            <div class="image">
+                              <p>IMAGE</p>
+                              <input type="file" name="banner_1_image">
+                            </div>
+                            <div class="heading">
+                              <p>HEADING</p>
+                              <input type="text" name="banner_1_heading" value="{{banner1.heading}}">
+                            </div>
+                            <div class="description">
+                              <p>DESCRIPTION</p>
+                              <textarea name="banner_1_description" >{{banner1.description}}</textarea>
+                            </div>
+                            <div>
+                              <button type="submit" class="submit">update</button>
+                            </div>
+                          </div> 
+                        </form>
+                        <hr>
+
+                        <!-- banner 1 control -->
+                        <form action="/admin_edit_banner" method="POST" enctype="multipart/form-data" style="display: flex;justify-content: space-between;">
+                          {% csrf_token %}
+                            <input type="text" name="banner" value="2" style="display: none;">
+                            <div style="display: flex;justify-content: center;padding: 20px;">
+                                <img src="/media/{{banner2.image}}"  width="350px;" height="150px"  style="border-radius: 30px;border: 1px solid rgb(0, 0, 0);">
+                            </div>  
+                            <div style="background-color: rgb(255, 255, 255);color: black;font-size: 12px;width: 100%;padding: 10px;margin:0px 100px;">
+        
+                              <div class="image">
+                                <p>IMAGE</p>
+                                <input type="file" name="banner_2_image">
+                              </div>
+                              <div class="heading">
+                                <p>HEADING</p>
+                                <input type="text" name="banner_2_heading" value="{{banner2.heading}}">
+                              </div>
+                              <div class="description">
+                                <p>DESCRIPTION</p>
+                                <textarea name="banner_2_description" >{{banner2.description}}</textarea>
+                              </div>
+                              <div>
+                                <button type="submit" class="submit">update</button>
+                              </div>
+                              
+                            </div> 
+        
+                          </form>
+                          <hr>
+
+                          <!-- banner 1 control -->
+                          <form action="/admin_edit_banner" method="POST" enctype="multipart/form-data" style="display: flex;justify-content: space-between;">
+                            {% csrf_token %}
+                              <input type="text" name="banner" value="3" style="display: none;">
+                              <div style="display: flex;justify-content: center;padding: 20px;">
+                                  <img src="/media/{{banner3.image}}"  width="350px;" height="150px"  style="border-radius: 30px;border: 1px solid rgb(0, 0, 0);">
+                              </div>  
+                              <div style="background-color: rgb(255, 255, 255);color: black;font-size: 12px;width: 100%;padding: 10px;margin:0px 100px;">
+          
+                                <div class="image">
+                                  <p>IMAGE</p>
+                                  <input type="file" name="banner_3_image">
+                                </div>
+                                <div class="heading">
+                                  <p>HEADING</p>
+                                  <input type="text" name="banner_3_heading" value="{{banner3.heading}}">
+                                </div>
+                                <div class="description">
+                                  <p>DESCRIPTION</p>
+                                  <textarea name="banner_3_description" >{{banner3.description}}</textarea>
+                                </div>
+                                <div>
+                                  <button type="submit" class="submit">update</button>
+                                </div>
+                                
+                              </div> 
+          
+                            </form>
+                            <hr>
+          <!-- end -->
+  </main><!-- End #main -->
+
+{%endblock%}
