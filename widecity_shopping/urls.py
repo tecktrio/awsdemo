@@ -46,7 +46,7 @@ urlpatterns = [
 
     # admin side url patterns
 
-    # path('upload', main_view, name="main-view"),
+    path('user_wallet', views.user_wallet),
 
     path('admin_panel', views.admin_panel),
     path('admin_sign_in', views.admin_sign_in),
@@ -79,6 +79,7 @@ urlpatterns = [
     # path('pay_with_paypal', views.pay_with_paypal),
     path('user_razorpay_place_order', views.user_razorpay_place_order, name='razorpay_success'),
     path('user_paypal_place_order', views.user_paypal_place_order, name='user_paypal_place_order'),
+    path('user_pay_with_wallet', views.user_pay_with_wallet, name='user_pay_with_wallet'),
 
 
     # test

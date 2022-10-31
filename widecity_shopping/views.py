@@ -1,6 +1,8 @@
 # here we write the views file
 # importing the neccessary packages and modules
 import csv
+import email
+import json
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -15,7 +17,7 @@ from reportlab.lib.pagesizes import letter
 from django.shortcuts import redirect, render
 from twilio.rest import Client
 from widecity_shopping.forms import add_category, add_product_form
-from widecity_shopping.models import Banners, Cart, Category, Coupon, Coupon_history, Image, Orders, Products, References, Return_request, Users, Address
+from widecity_shopping.models import Banners, Cart, Category, Coupon, Coupon_history, Image, Orders, Products, References, Return_request, Users, Address, Wallet_history
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
@@ -546,11 +548,38 @@ def user_update_user(request, user_id):
     return redirect(user_account)
 # generating the contents of the user razorpay place order
 # start
-
+def user_pay_with_wallet(request):
+    status = ''
+    if 'user' in request.session:
+        user = request.session['user']
+    else:
+        return redirect('/user_sign_in')
+    this_user = Users.objects.get(email=user)
+    if request.method == 'POST':
+        sub_total = request.POST.get('sub_total')
+        wallet_balance = int(this_user.wallet_balance)
+        payment_method = 'wallet'
+        cart_products = Cart.objects.filter(user=this_user.id)
+        if int(sub_total) > wallet_balance:
+            status = 'insufficiant balance'
+        else:
+            for product in cart_products:
+                this_product = Products.objects.get(id=product.product_id)
+                new_order = Orders.objects.create(product=this_product, user=this_user, quantity=product.quantity,
+                                                Address=1, total_price=product.total_price, payment_method=payment_method)
+                print('adding : ', this_product.name)
+                new_order.save()
+                new_to_wallet = Wallet_history.objects.create(user_id = this_user.id,order_id = new_order,Debit_Credit = 'debited')
+                new_to_wallet.save()
+                cart_products = Cart.objects.filter(user=this_user.id).delete()
+                status = 'success'
+        print('got wallet amount')
+        return JsonResponse({'status':status})
+    return render(request,'user_pay_with_wallet.html')
 
 @csrf_exempt
 def user_razorpay_place_order(request):
-    request.session['checkout_status'] = 'False'
+    # request.session['checkout_status'] = 'False'
     status = ''
     # sub_total = request.session['sub_total']
     sub_total = 234
@@ -854,7 +883,10 @@ def user_reset_pass_successs(request):
 ###############################################################################################
 
 # generating the contents of the user account
-
+def add_to_wallet_history(order):
+    new_wallet_history = Wallet_history.objects.create(order_id = order)
+    new_wallet_history.save()
+    
 
 def user_account(request):
     refered_people = ''
@@ -872,6 +904,23 @@ def user_account(request):
         if int(current_date.day) >= int(order.Order_day)+7:
             order.status = 'delivered_no_return'
             order.save()
+
+    for order in orders:
+        if order.status == 'Refunded':
+            order.status = 'completed'
+            this_user.wallet_balance = int(this_user.wallet_balance) + int(order.total_price)
+            this_user.save()
+            order.save()
+            add_to_wallet_history(order)#passing order instance
+    for order in orders:
+        if order.status == 'canceled':
+            if order.payment_method != 'cod':
+                order.status = 'completed'
+                this_user.wallet_balance = int(this_user.wallet_balance) + int(order.total_price)
+                this_user.save()
+                order.save()
+                add_to_wallet_history(order.id)
+    
     print(refered_people_details)
     peoples = []
     for people in refered_people_details:
@@ -890,7 +939,7 @@ def user_otp_sign_in(request):
         user_contact_number = request.POST.get('user_contact_number')
         try:
             print(user_contact_number)
-            user = Users.objects.get(contact_number=123456789)
+            user = Users.objects.get(contact_number=int(user_contact_number))
             print(user.contact_number)
             if user is not None:
                 print('found the user')
@@ -930,7 +979,27 @@ def user_otp_sign_in(request):
 ###############################################################################################
 
 #
+def user_wallet(request):
 
+    
+    if 'user' in request.session:
+        user = request.session['user']
+        this_user = Users.objects.get(email=user)
+    else:
+        return redirect('/user_sign_in')
+    
+    if request.method == 'POST':
+        user_entered_amount = request.POST.get('user_entered_amount')
+
+
+        this_user.wallet_balance = int(this_user.wallet_balance)+int(user_entered_amount)
+        this_user.save()
+        print(user_entered_amount)
+
+    user = Users.objects.get(email=user)
+    wallet_balance = user.wallet_balance
+    user_wallet_history  = Wallet_history.objects.filter(user_id = this_user.id)
+    return render(request,'user_wallet.html',{'wallet_balance':wallet_balance,'user_wallet_history':user_wallet_history})
 
 def user_otp_sign_in_validation(request):
     if request.method == 'POST':

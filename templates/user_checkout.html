@@ -175,8 +175,6 @@
                                 </tr>
                                 
                         </table>
-
-
                         <section >
                                  <!-- Default Accordion -->
                                 <div class="accordion" id="accordionExample">
@@ -231,6 +229,47 @@
                                     </div>
                                 </div>
 
+
+                                <div class="accordion-item payment_tabs">
+                                    <h2 class="accordion-header" id="headingfour">
+                                    <button class="accordion-button collapsed pt" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
+                                        Wallet
+                                    </button>
+                                    </h2>
+                                    <div id="collapsefour" class="accordion-collapse collapse" aria-labelledby="headingfour" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body" style="color:black">
+                                        Pay with Wallet
+                                    </div>
+                              
+                                    <button onclick="user_wallet_pay('{{sub_total}}')">pay</button>
+                                    <a href="/user_wallet"><button>view wallet</button></a>
+                                    <div id="wallet_message" style="color: red;font-size:12px ;display: inline;"></div>
+                                    </div>
+                                </div>
+                                <script>
+                                function user_wallet_pay(sub_total){
+                                    console.log('you are going to do the payment of rupees ',sub_total, 'from wallet')
+                                    $.ajaxSetup({
+                                        data:{csrfmiddlewaretoken:'{{csrf_token}}'}
+                                    })
+                                    $.ajax({
+                                        url:'/user_pay_with_wallet',
+                                        data:{'sub_total':sub_total},
+                                        method:'post',
+                                        success:function(response){
+
+                                            console.log(response)
+                                            if (response['status']=='insufficient balance'){
+                                                document.getElementById('wallet_message').innerText = 'insufficiant balance'}
+                                                else{
+                                                    window.location.href= '/user_thankyou_for_order'
+                                                }
+                                        }
+                                    })
+                                    
+
+                                }
+                                </script>
                                 <div class="accordion-item payment_tabs">
                                     <h2 class="accordion-header" id="headingThree">
                                     <button class="accordion-button collapsed pt" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">

@@ -1,4 +1,5 @@
 from datetime import datetime
+from email.policy import default
 from django.db import models
 
 import datetime
@@ -33,6 +34,7 @@ class Users(models.Model):
     is_admin = models.CharField(max_length = 50,default='false')
     profile_image = models.ImageField(upload_to = 'profile_image/')
     reference_id = models.CharField(max_length  =100,default = '0000000000')
+    wallet_balance = models.IntegerField(default = 0)
 
 class Address(models.Model):
     email = models.CharField(max_length = 50 ,default = 'buddy')
@@ -147,3 +149,10 @@ class Return_request(models.Model):
 class References(models.Model):
     user_id = models.CharField(max_length = 100)
     refered_user_id = models.CharField(max_length = 100)
+
+class Wallet_history(models.Model):
+    user_id = models.CharField(max_length = 100,default=1)
+    order_id = models.ForeignKey(Orders,on_delete = models.CASCADE)
+    reason = models.CharField(max_length = 500)
+    Debit_Credit = models.CharField(max_length = 500,default='credited')#it can be debited or credited
+    
