@@ -1613,9 +1613,7 @@ def admin_edit_banner(request):
         banner2 = Banners.objects.get(id=2)
         banner3 = Banners.objects.get(id=3)
     except:
-        banner1 = ''
-        banner2 = ''
-        banner3 = ''
+       return render(request,'admin_add_banner.html')
 
 
     if 'admin' in request.session:
@@ -1623,8 +1621,11 @@ def admin_edit_banner(request):
     else:
         return redirect('/admin_sign_in')
 
-    if banner1 == None:
-         return render(request,'admin_add_banner.html')
+    # if banner1 == None:
+    #      return render(request,'admin_add_banner.html')
+
+
+
     if request.method == 'POST':
 
         if request.POST.get('banner') == '1':
@@ -1680,6 +1681,7 @@ def admin_edit_banner(request):
             banner_3.save()
 
     return render(request, 'admin_edit_banner.html', {'banner1': banner1, 'banner2': banner2, 'banner3': banner3})
+
 def admin_add_banner(request):
     if request.method == 'POST':
         # banner 1 details
