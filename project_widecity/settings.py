@@ -32,6 +32,11 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'widecity_shopping',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +60,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'project_widecity.urls'
+
+# AUTHENTICATION_BACKENDS = [
+
+#     # Needed to login by username in Django admin, regardless of `allauth`
+#     'django.contrib.auth.backends.ModelBackend',
+
+#     # `allauth` specific authentication methods, such as login by e-mail
+#     'allauth.account.auth_backends.AuthenticationBackend',
+  
+# ]
 
 TEMPLATES = [
     {
@@ -80,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'project_widecity',
         'USER':'root',
-        'PASSWORD':'9946658045@abcd'
+        'PASSWORD':'1234'
     }
 }
 

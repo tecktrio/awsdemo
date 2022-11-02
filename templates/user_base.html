@@ -80,16 +80,15 @@
                                 <li><a href="/user_sign_up">Sign up</a></li>
                                 <li>guest</li>
                                 <div
-                                    style="height: 30px ;border-radius:50%;width: 30px;padding:5px;justify-content: center;display: flex;background-color: rgb(243, 255, 243);align-items: center;border:1px solid rgb(120, 114, 114);margin:0px 10px;">
+                                    style="height: 30px ;border-radius:50%;width: 30px;justify-content: center;display: flex;background-color: rgb(243, 255, 243);align-items: center;border:1px solid rgb(120, 114, 114);margin:0px 10px;overflow: hidden;">
                                     <img src="/media/profile/user.jpeg" alt="Profile" style="height: 100%;width: 100%;">
                                 </div>
                                 {% else %}
                                 <li><a href="/user_sign_out">sign out</a></li>
                                 <li>{{user.full_name}}</li>
                                 <div
-                                    style="height: 30px ;border-radius:50%;width: 30px;padding:5px;justify-content: center;display: flex;background-color: rgb(243, 255, 243);align-items: center;border:1px solid rgb(120, 114, 114);margin:0px 10px;">
-                                    <img src="/media/{{user.profile_image}}" alt="img"
-                                        style="height: 100%;width: 100%;">
+                                    style="height: 30px ;border-radius:50%;width: 30px;justify-content: center;display: flex;background-color: rgb(243, 255, 243);align-items: center;border:1px solid rgb(120, 114, 114);margin:0px 10px;overflow: hidden;">
+                                    <img src="/media/{{user.profile_image}}" width="100%" height="100%">
                                 </div>
                                 {% endif %}
                             </ul>
@@ -100,6 +99,7 @@
         </div><!-- End .header-top -->
         <div class="header-middle" style="background-color: rgb(255, 255, 255);">
             <div class="container">
+
                 <div class="header-left">
                     <button class="mobile-menu-toggler">
                         <span class="sr-only" style="color: rgb(0, 0, 0);">Toggle mobile menu</span>
@@ -114,6 +114,7 @@
                             alt="/media/{{banner.image}}" width="100" style="margin: 0px;">
                     </a>
                 </div><!-- End .header-left -->
+                
                 <!-- search  -->
                 <div class="header-center">
                     <div class="header-search header-search-extended header-search-visible d-none d-lg-block" style="border: 1px solid black;border-radius: 20px;">

@@ -76,7 +76,7 @@ class Products(models.Model):
     
     name = models.CharField(max_length = 100 )
     description = models.CharField(max_length = 200 )
-    image_1 = models.ImageField(upload_to='image_2_of_products')
+    image_1 = models.ImageField(upload_to='image_1_of_products')
     image_2 = models.ImageField(upload_to ='image_2_of_products')
     image_3 = models.ImageField(upload_to ='image_3_of_products')
     image_4 = models.ImageField(upload_to ='image_4_of_products')

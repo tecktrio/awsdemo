@@ -1,10 +1,10 @@
-from xml.etree.ElementInclude import include
+
 
 from django.conf import settings
 from django.conf.urls.static import static
 from widecity_shopping import views
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 # from widecity_shopping.views import main_view
 
 urlpatterns = [
@@ -59,6 +59,7 @@ urlpatterns = [
     path('admin_add_category', views.admin_add_category),
     path('admin_list_orders', views.admin_list_orders),
     path('admin_edit_banner', views.admin_edit_banner),
+    path('admin_add_banner', views.admin_add_banner),
     path('admin_thankyou_for_adding_product', views.admin_thankyou_for_adding_product),
     path('admin_get_graph_data', views.admin_get_graph_data),
     path('admin_change_order_status', views.admin_change_order_status),
@@ -84,6 +85,7 @@ urlpatterns = [
 
     # test
     path('test', views.test),
+    path('accounts/', include('allauth.urls')),
 
 
 

@@ -2,7 +2,10 @@
 # importing the neccessary packages and modules
 import csv
 import email
+from email.mime import image
 import json
+import os
+from turtle import heading
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -37,10 +40,11 @@ delivery_charge = 10
 
 
 def root(request):
-    if 'user' in request.session:
-        return redirect('/user_home')
-    else:
-        return redirect('/user_sign_in')
+
+    data = request.GET.keys()
+
+    print('data',data)
+    return redirect('/user_home')
 
 # controls the content in user home
 # start
@@ -99,9 +103,16 @@ def user_home(request):
 
 
 def user_product_detail(request, product_id):
+    user = ''
+    if 'user' in request.session:
+        user = request.session['user']
+    else:
+        user = 'guest'
+
     product = Products.objects.get(id=product_id)
     category = Products.objects.filter(category=product.category)
-    return render(request, 'user_product_detail.html', {'product': product, 'category': category})
+    categories = Category.objects.all()
+    return render(request, 'user_product_detail.html', {'product': product, 'category': category,'user':user,'categories':categories})
 # end
 #############################################################################################################################
 
@@ -219,29 +230,42 @@ def user_category_view(request, name):
 
 def user_add_to_cart(request):
     response = 'failed'
-    if 'user' in request.session:
-        user = request.session['user']
-    else:
-        response = 'user_not_found'
-        return JsonResponse({'response': response})
     if request.method == 'POST':
-        product_id = int(request.POST.get('product_id'))
-        user = Users.objects.get(email=user)
-        user_id = int(user.id)
-        product = Products.objects.get(id=product_id)
-        product_offer = product.offer_percentage
-        discount = int(product.price) * (int(product_offer) / 100)
-        total_price = product.price - discount
-        print('offer applied ', total_price)
-        new_cart_product = Cart.objects.create(
-            product_id=product_id,
-            user_id=user_id,
-            quantity=1,
-            total_price=int(total_price),
-        )
-        new_cart_product.save()
-        response = 'product_added'
-        print(response)
+        if 'user' in request.session:
+            user = request.session['user']
+            product_id = int(request.POST.get('product_id'))
+            user = Users.objects.get(email=user)
+            product = Products.objects.get(id=product_id)
+            product_offer = product.offer_percentage
+            discount = int(product.price) * (int(product_offer) / 100)
+            total_price = product.price - discount
+            print('offer applied ', total_price)
+            new_cart_product = Cart.objects.create(
+                product_id=product_id,
+                user_id=user,
+                quantity=1,
+                total_price=int(total_price),
+            )
+            new_cart_product.save()
+            response = 'product_added'
+            print(response)
+        else:
+            # user_id = 1
+            # product_id = int(request.POST.get('product_id'))
+            # product = Products.objects.get(id=product_id)
+            # product_offer = product.offer_percentage
+            # discount = int(product.price) * (int(product_offer) / 100)
+            # total_price = product.price - discount
+            # print('offer applied ', total_price)
+            # new_cart_product = Cart.objects.create(
+            #     product_id=product_id,
+            #     user_id=user_id,
+            #     quantity=1,
+            #     total_price=int(total_price),
+            # )
+            # new_cart_product.save()
+            response = 'user_not_found'
+            print(response)
     return JsonResponse({'response': response})
 # end
 #############################################################################################################################
@@ -543,13 +567,19 @@ def user_update_user(request, user_id):
     user = Users.objects.get(id=user_id)
     user.full_name = user_full_name
     user.contact_number = user_contact_number
-    user.profile_image = profile_image
+    if profile_image != None:
+        try:
+            os.remove(user.profile_image.path)
+        except:
+            pass    
+        user.profile_image = profile_image
+
     user.save()
     return redirect(user_account)
 # generating the contents of the user razorpay place order
 # start
 def user_pay_with_wallet(request):
-    status = ''
+    status = 'insufficiant balance'
     if 'user' in request.session:
         user = request.session['user']
     else:
@@ -560,8 +590,9 @@ def user_pay_with_wallet(request):
         wallet_balance = int(this_user.wallet_balance)
         payment_method = 'wallet'
         cart_products = Cart.objects.filter(user=this_user.id)
-        if int(sub_total) > wallet_balance:
-            status = 'insufficiant balance'
+        print(sub_total,wallet_balance)
+        if int(sub_total) > int(wallet_balance):
+            status = 'insufficiant_balance'
         else:
             for product in cart_products:
                 this_product = Products.objects.get(id=product.product_id)
@@ -571,6 +602,8 @@ def user_pay_with_wallet(request):
                 new_order.save()
                 new_to_wallet = Wallet_history.objects.create(user_id = this_user.id,order_id = new_order,Debit_Credit = 'debited')
                 new_to_wallet.save()
+                this_user.wallet_balance = int(this_user.wallet_balance) - int(product.total_price)
+                this_user.save()
                 cart_products = Cart.objects.filter(user=this_user.id).delete()
                 status = 'success'
         print('got wallet amount')
@@ -919,7 +952,7 @@ def user_account(request):
                 this_user.wallet_balance = int(this_user.wallet_balance) + int(order.total_price)
                 this_user.save()
                 order.save()
-                add_to_wallet_history(order.id)
+                add_to_wallet_history(order)
     
     print(refered_people_details)
     peoples = []
@@ -999,7 +1032,7 @@ def user_wallet(request):
     user = Users.objects.get(email=user)
     wallet_balance = user.wallet_balance
     user_wallet_history  = Wallet_history.objects.filter(user_id = this_user.id)
-    return render(request,'user_wallet.html',{'wallet_balance':wallet_balance,'user_wallet_history':user_wallet_history})
+    return render(request,'user_wallet.html',{'wallet_balance':wallet_balance,'user_wallet_history':user_wallet_history,'user':this_user})
 
 def user_otp_sign_in_validation(request):
     if request.method == 'POST':
@@ -1512,23 +1545,28 @@ def admin_edit_Product(request):
             product.image_1 = product.image_1
             print('product image 1 not found')
         else:
+            os.remove(product.image_1.path)
             product.image_1 = request.FILES.get('image_1')
 
         if request.FILES.get('image_2') == None:
             product.image_2 = product.image_2
             print('product image 2 not found')
         else:
+            os.remove(product.image_2.path)
             product.image_2 = request.FILES.get('image_2')
         if request.FILES.get('image_3') == None:
             product.image_3 = product.image_3
             print('product image 3 not found')
         else:
+            os.remove(product.image_3.path)
             product.image_3 = request.FILES.get('image_3')
         if request.FILES.get('image_4') == None:
             product.image_4 = product.image_4
             print('product image 4 not found')
         else:
+            os.remove(product.image_4.path)
             product.image_4 = request.FILES.get('image_4')
+
         product.offer_percentage = request.POST.get('offer_percentage')
         product.save()
         return render(request, 'admin_edit_product_success.html')
@@ -1541,6 +1579,10 @@ def admin_edit_Product(request):
     if action == 'edit':
         return render(request, 'admin_edit_product.html', {'product': product, 'admin': this_admin})
     elif action == 'delete':
+        os.remove(product.image_1.path)
+        os.remove(product.image_2.path)
+        os.remove(product.image_3.path)
+        os.remove(product.image_4.path)
         product.delete()
         return redirect(admin_list_product)
 
@@ -1557,6 +1599,7 @@ def admin_edit_category(request, cat_id):
         if image is None:
             category.image = Category.objects.get(id=cat_id).image
         else:
+            os.remove(category.image.path)
             category.image = image
 
         category.offer_percentage = offer_percentage
@@ -1568,7 +1611,9 @@ def admin_edit_category(request, cat_id):
 
 def admin_edit_banner(request):
     admin = ''
+
     try:
+        
         banner1 = Banners.objects.get(id=1)
         banner2 = Banners.objects.get(id=2)
         banner3 = Banners.objects.get(id=3)
@@ -1577,24 +1622,33 @@ def admin_edit_banner(request):
         banner2 = ''
         banner3 = ''
 
+
     if 'admin' in request.session:
         admin = request.session['admin']
     else:
         return redirect('/admin_sign_in')
 
+    if banner1 == None:
+         return render(request,'admin_add_banner.html')
     if request.method == 'POST':
 
         if request.POST.get('banner') == '1':
 
+            
             banner_1_image = request.FILES.get('banner_1_image')
+
+          
+
         # banner_2_image = request.FILES('banner_2_image')
         # banner_3_image = request.FILES('banner_3_image')
 
             banner_1_heading = request.POST.get('banner_1_heading')
             banner_1_description = request.POST.get('banner_1_description')
+
             banner_1 = Banners.objects.get(id=1)
             banner_1.heading = banner_1_heading
             banner_1.description = banner_1_description
+            os.remove(banner_1.image.path)
             banner_1.image = banner_1_image
             banner_1.save()
 
@@ -1606,9 +1660,11 @@ def admin_edit_banner(request):
 
             banner_2_heading = request.POST.get('banner_2_heading')
             banner_2_description = request.POST.get('banner_2_description')
+
             banner_2 = Banners.objects.get(id=2)
             banner_2.heading = banner_2_heading
             banner_2.description = banner_2_description
+            os.remove(banner_2.image.path)
             banner_2.image = banner_2_image
             banner_2.save()
 
@@ -1620,14 +1676,43 @@ def admin_edit_banner(request):
 
             banner_3_heading = request.POST.get('banner_3_heading')
             banner_3_description = request.POST.get('banner_3_description')
+
             banner_3 = Banners.objects.get(id=3)
             banner_3.heading = banner_3_heading
             banner_3.description = banner_3_description
+            os.remove(banner_3.image.path)
             banner_3.image = banner_3_image
             banner_3.save()
 
     return render(request, 'admin_edit_banner.html', {'banner1': banner1, 'banner2': banner2, 'banner3': banner3})
+def admin_add_banner(request):
+    if request.method == 'POST':
+        # banner 1 details
+        banner_1_heading = request.POST.get('banner_1_heading')
+        banner_1_description = request.POST.get('banner_1_description')
+        banner_1_image = request.FILES.get('banner_1_image')
 
+        # banner 2 details
+        banner_2_heading = request.POST.get('banner_2_heading')
+        banner_2_description = request.POST.get('banner_2_description')
+        banner_2_image = request.FILES.get('banner_2_image')
+
+        # banner 3 details
+        banner_3_heading = request.POST.get('banner_3_heading')
+        banner_3_description = request.POST.get('banner_3_description')
+        banner_3_image = request.FILES.get('banner_3_image')
+
+        print(banner_1_heading,banner_1_description,banner_2_heading,banner_2_description,banner_3_heading,banner_3_description)
+
+        banner1_add = Banners.objects.create(heading=banner_1_heading,description=banner_1_description,image=banner_1_image)
+        banner2_add = Banners.objects.create(heading=banner_2_heading,description=banner_2_description,image=banner_2_image)
+        banner3_add = Banners.objects.create(heading=banner_3_heading,description=banner_3_description,image=banner_3_image)
+        banner1_add.save()
+        banner2_add.save()
+        banner3_add.save()
+        return HttpResponse('banner added')
+
+    return HttpResponse('banner failed to add')
 
 def admin_category_offers(request):
     admin = ''

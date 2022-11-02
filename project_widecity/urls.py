@@ -16,7 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
+from widecity_shopping import views
+
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
+    path('accounts/profile/', views.root),
     path('', include('widecity_shopping.urls')),
 ]

@@ -259,12 +259,15 @@
                                         success:function(response){
 
                                             console.log(response)
-                                            if (response['status']=='insufficient balance'){
+                                            if (response['status']=='insufficiant_balance'){
                                                 document.getElementById('wallet_message').innerText = 'insufficiant balance'}
-                                                else{
+                                            else if(response['status']=='success'){
                                                     window.location.href= '/user_thankyou_for_order'
-                                                }
-                                        }
+                                            }
+                                            else{
+                                                document.getElementById('wallet_message').innerText = 'sry, something went wrong'}
+                                            }
+                                        
                                     })
                                     
 
