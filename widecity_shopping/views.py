@@ -1,11 +1,7 @@
 # here we write the views file
 # importing the neccessary packages and modules
 import csv
-import email
-from email.mime import image
-import json
 import os
-from turtle import heading
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -24,7 +20,6 @@ from widecity_shopping.models import Banners, Cart, Category, Coupon, Coupon_his
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache
-import pdfkit
 import datetime
 from datetime import date, timedelta
 # end of importing files
