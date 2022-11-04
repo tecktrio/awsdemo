@@ -28,7 +28,7 @@
                 <tr>
                   <th scope="col">Mail Id</th>
                   <th scope="col">Contact</th>
-                  <th scope="col">Block</th>
+                  <th scope="col">Block/Unblock</th>
                 </tr>
               </thead>
               <!--                /////////////////////////////////////////////////////////////////////////////-->
@@ -40,11 +40,20 @@
                   <td>
                     <div class="form-check form-switch">
                       {% if user.active_status == 'active' %}
-                      <input class="form-check-input" type="checkbox" id="active{{user.email}}"
-                        onchange="update_status('{{user.email}}')">
+                      <div style="display:flex ;justify-content: space-between;">
+                          <p>UnBlocked</p>
+                          <input class="form-check-input" type="checkbox" id="active{{user.email}}"
+                          onchange="update_status('{{user.email}}')">
+                      </div>
+                     
                       {% else %}
-                      <input class="form-check-input" type="checkbox" id="active{{user.email}}"
-                        onchange="update_status('{{user.email}}')" checked>
+                      <div style="display:flex ;justify-content: space-between;">      
+                          <p>Blocked</p>
+                          <input class="form-check-input" type="checkbox" id="active{{user.email}}"
+                          onchange="update_status('{{user.email}}')" checked>
+
+                      </div>
+               
                       {% endif %}
                     </div>
                   </td>
@@ -80,6 +89,7 @@
         else if (response['status'] == 'active') {
           console.log('user is now active')
         }
+        window.location.reload()
       },
       error: function () {
         console.log('ajax is not working')

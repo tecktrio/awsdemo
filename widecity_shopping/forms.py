@@ -1,9 +1,14 @@
 
+from dataclasses import field
+from tkinter import Widget
 from django import forms
+from django.forms import NumberInput,Textarea,TextInput
 
 from widecity_shopping.models import Banners, Category, Products, Subcategory
 
-
+class DateInput(forms.DateInput):
+    input_type = 'date'
+    
 class add_product_form(forms.ModelForm):
     class Meta:
         model = Products
@@ -12,12 +17,9 @@ class add_product_form(forms.ModelForm):
                     'description',
                     'specification',
                     'stock_available',
-                    'rating',
-                    'total_sold', 
                     'is_trusted', 
                     'available_status', 
-                    'arrival_date',
-                    'end_date',
+                    'manufacturing_date',
                     'price',
                     'category', 
                     'image_1', 
@@ -25,6 +27,14 @@ class add_product_form(forms.ModelForm):
                     'image_3',
                     'image_4',
                 ]
+        widgets = {
+            'manufacturing_date':DateInput(),
+            'name':TextInput(attrs={'style':'width:400px;border:2px solid grey;border-radius:10px;padding:20px;font-weight:bold;'}),
+            'description':Textarea(attrs={'style':'width:400px;height:200px;border:2px solid grey;border-radius:10px;padding:10px;font-weight:bold;'}),
+            'specification':Textarea(attrs={'style':'width:400px;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;'}),
+            'stock_available':NumberInput(attrs={'style':'width:400px;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;'}),
+            'price':NumberInput(attrs={'style':'width:400px;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;','min':1}),
+        }
 
 class add_product_images_form(forms.ModelForm):
     class Meta:

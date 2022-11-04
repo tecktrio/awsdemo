@@ -74,22 +74,21 @@ class Subcategory(models.Model):
 
 class Products(models.Model):
     
-    name = models.CharField(max_length = 100 )
-    description = models.CharField(max_length = 200 )
+    name = models.CharField(max_length = 30 )
+    description = models.CharField(max_length = 150 )
     image_1 = models.ImageField(upload_to='image_1_of_products')
     image_2 = models.ImageField(upload_to ='image_2_of_products')
     image_3 = models.ImageField(upload_to ='image_3_of_products')
     image_4 = models.ImageField(upload_to ='image_4_of_products')
-    arrival_date = models.CharField(max_length  = 100)
-    end_date = models.CharField(max_length  = 100 )
+    manufacturing_date = models.DateField(max_length  = 100)
     price = models.IntegerField(default = 0)
     # mrp = models.IntegerField(default = 0)
     # category = models.ForeignKey(Category,on_delete = models.CASCADE)
     category = models.CharField(max_length=100)
     specification = models.CharField(max_length = 300)
     stock_available = models.IntegerField()
-    rating = models.IntegerField()
-    total_sold = models.IntegerField()
+    rating = models.IntegerField(default=0)
+    total_sold = models.IntegerField(default = 0)
     is_trusted = models.CharField(
         max_length=20,
         choices=trust_choices,

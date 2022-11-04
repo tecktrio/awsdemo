@@ -71,21 +71,18 @@
                 <div style="display: flex;justify-content: space-between;margin: 10px;">
                     <p class="column">Name</p>
                     <input type="text" id="name" class="column lightfont" value={{category.name}} name="name"
-                        style="background-color: rgba(0,0,0,0);border:1px solid white;">
+                        style="background-color: rgba(0,0,0,0);border:1px solid rgb(0, 0, 0);border-radius: 5px;padding:5px">
                 </div>
                 <div style="display: flex;justify-content: space-between;margin: 10px;">
                     <p class="column">Image</p>
                     <div>
                         <img src="/media/{{category.image}}" style="width: 30%;margin:10px;border-radius:10px;">
                         <input style="margin: 15px 15px;" type="file" id="image" name="image" class="column lightfont">
+                        <label style="margin-left: 15px;color:grey">{{category.image}}</label>
                     </div>
                 </div>
-                <div style="color:rgb(0, 0, 0);display: flex;">
-                    <p class="column" style="margin: 10px;">Offer Percentage</p>
-                    <input type="number" name="offer_percentage" value="{{category.offer_percentage}}" min="0"
-                        max="100">
-                </div>
-                <button style="border-radius:10px ;">update</button>
+              
+                <button style="border-radius:10px ;background-color: rgb(0, 179, 255);color: white;border: 1px solid grey;padding: 2px 10px;width: 100%;margin-top: 10px;">update</button>
             </form>
         </div>
     </div>
@@ -93,60 +90,7 @@
     </div>
 
     <script>
-        function validate() {
-            var user_email = document.getElementById('user_email').value
-            var user_email_err = document.getElementById('user_email_err')
-            var user_password = document.getElementById('user_password').value
-            var user_password_err = document.getElementById('user_password_err')
-            var message = document.getElementById('message')
-
-            if (user_email == '') {
-                console.log('Email field cannot be empty');
-                user_email_err.innerHTML = 'Email field cannot be empty.'
-            }
-            else if (user_password == '') {
-                console.log('Password cannot be empty');
-                user_password_err.innerHTML = 'Password Cannot be empty'
-            }
-            else {
-                console.log('trying to log in with user data');
-                try_to_signin(user_email, user_password)
-            }
-        }
-
-        function try_to_signin(user_email, user_password) {
-
-            $.ajaxSetup({
-                data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
-            })
-
-            $.ajax({
-                url: '/user_sign_in',
-                method: 'post',
-                data: { 'user_email': user_email, 'user_password': user_password },
-                success: function (response) {
-                    resp = response['user_authentication_status']
-                    if (resp == 'user_not_found') {
-                        console.log('user_not_found_error')
-                        message.innerHTML = 'user not found'
-                    }
-                    else if (resp == 'wrong_password') {
-                        console.log('wrong password error')
-                        message.innerHTML = 'wrong password'
-                    }
-                    else if (resp == 'user_not_active') {
-                        console.log('user is not active')
-                        message.innerHTML = 'user is not active'
-                    }
-                    else if (resp == 'success') {
-                        console.log('user is nice')
-                        window.location.href = '/user_home'
-                    }
-                    // window.location.href = '/user_home'
-                },
-            })
-        }
-
+       
         function status_change(order_id) {
 
             console.log('did anyone called me')

@@ -5,43 +5,37 @@
 <head>
   <style>
     .edit{
-      background-color:rgb(15, 15, 198);
+      background-color:rgb(8, 8, 84);
       text-align:center;
       color:rgb(255, 255, 255);
       border-radius:5px;
-      padding:3px 10px;
+      padding:5px 10px;
       font-size:13px;
       border:none;
       margin:3px;
     }
     .edit:hover{
-      background-color: rgb(16, 96, 207);
+      background-color: rgb(0, 149, 255);
     }
     .delete{
-      background-color:rgb(162, 29, 29);
+      background-color:rgb(102, 24, 24);
       text-align:center;
       color:white;
       border-radius:5px;
-      padding:3px 10px;
+      padding:5px 10px;
       font-size:13px;
       border:none;margin:3px;
     }
     .delete:hover{
-      background-color: rgb(255, 0, 0);
+      background-color: rgb(232, 26, 26);
     }
   </style>
 </head>
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1 style="color: rgb(0, 0, 0);">Manage Product</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item">Tables</li>
-          <li class="breadcrumb-item active">General</li>
-        </ol>
-      </nav>
+      <h1 style="color: rgb(0, 0, 0);"> Product Management</h1>
+     
     </div><!-- End Page Title -->
     <section class="section">
           <div>
@@ -57,8 +51,6 @@
                     <th style="font-size:13px;color: rgb(0, 0, 0);" scope="col">PRICE</th>
                     <th style="font-size:13px;color: rgb(0, 0, 0);" scope="col">CATEGORY</th>
                     <th style="font-size:13px;color: rgb(0, 0, 0);" scope="col">DESCRIPTION</th>
-                    <th style="font-size:13px;color: rgb(0, 0, 0);" scope="col">RATING</th>
-                    <th style="font-size:13px;color: rgb(0, 0, 0);" scope="col">SOLD</th>
                     <th style="font-size:13px;color: rgb(0, 0, 0);" scope="col">STATUS</th>
                   </tr>
                 </thead>
@@ -66,14 +58,16 @@
                 <tbody>
               {% for product in products %}
                   <tr>
-                    <td style="font-size:13px"><img src="media/{{product.image_1}}" width="50px"></td>
+                    <td style="font-size:13px;border-radius: 10px;"><img src="media/{{product.image_1}}" width="50px"></td>
                     <td style="font-size:13px;color: rgb(0, 0, 0);">{{product.name}}</td>
                     <td style="font-size:13px;color: rgb(0, 0, 0);">{{product.price}}</td>
                     <td style="font-size:13px;color: rgb(0, 0, 0);">{{product.category}}</td>
                     <td style="font-size:13px;color: rgb(0, 0, 0);">{{product.description}}</td>
-                    <td style="font-size:13px;color: rgb(0, 0, 0);">{{product.rating}}</td>
-                    <td style="font-size:13px;color: rgb(0, 0, 0);">{{product.total_sold}}</td>
-                    <td style="font-size:13px;color: rgb(0, 0, 0);">{{product.available_status}}</td>
+                    {% if product.available_status == 'availabe' %}
+                    <td><div style="padding: 5px;background-color: rgb(0, 207, 69);width: 50px;"></div></td>
+                    {% else %}
+                    <td><div style="padding: 5px;background-color: rgb(219, 17, 17);width: 50px;"></div></td>
+                    {% endif %}
                     <td style="display:flex;">
                       <form action="/admin_edit_Product" >
                       <button name="action" type="submit" onclick="return confirm('Be careful while you edit, Are you sure you want to do this?')" value="edit" class="edit">

@@ -17,7 +17,8 @@
     }
     .data {
       text-align: left;
-      color: rgb(99, 96, 96);
+      color: rgb(85, 83, 83);
+      font-weight: normal;
     }
   </style>
 </head>
@@ -27,6 +28,7 @@
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">All Orders</h5>
+      {% if orders %}
       <table class="table table-sm">
         <thead>
           <tr>
@@ -41,7 +43,8 @@
         <tbody>
           <!--########################################################################################################################-->
           {% for order in orders %}
-          <tr>
+     
+          <tr >
             <td scope="row" class="data">{{order.user.full_name}}</td>
             <td class="data">{{order.product.name}}</td>
             <td class="data">{{order.Order_day}}/{{order.Order_month}}/{{order.Order_year}}</td>
@@ -62,12 +65,29 @@
             <td class="data" style="background-color: rgb(109, 122, 209);color: white;text-align: center;border-radius: 5px;padding: 3px;">Canceled</td>
             {% endif %}
             <td class="data" style="text-align: center;"><a href="/admin_order_details/{{order.id}}"><button id="view">View</button></a></td>
-          </tr>
+          </tr>  
+  
           {% endfor %}
+
+      
 
           <!--########################################################################################################################-->
         </tbody>
       </table>
+        {% else %}
+        <div>
+           
+           <div style="text-align: center;margin: 30px;">
+                       <img src="/media/message_images/no data.png"  width="30%">
+
+           </div>
+           <div style="color: black;text-align: center;font-size: 20px;">Oops! You have no orders yet</div>
+           <p style="color: rgb(133, 127, 127);text-align: center;">
+            please wait for some while or come back after some time. 
+           </p>
+        </div>
+       
+        {% endif %}
     </div>
   </div>
 </main>

@@ -34,21 +34,27 @@
         .column{
             color:rgb(0, 0, 0);
             margin:0px 10px;
+            
         }
         label{
-            color:rgb(15, 97, 15);
+            color:rgb(0, 0, 0);
             font-weight: bold;
         }
         .lightfont{
-            font-weight: bold;
-            color: rgb(0, 0, 0);
+            font-weight: normal;
+            color: rgb(69, 66, 66);
+            border: 1px solid rgb(146, 145, 145);
+            padding:5px 10px;
+            border-radius: 5px;
         }
         #next_status{
-            background-color:rgba(0, 0, 0,0);
+            background-color:rgb(25, 115, 188);
             border-radius: 10px;
-            color:rgb(0, 0, 0);
-            border:1px solid rgb(0, 0, 0);
-            font-size: 12px;padding:10px;
+            color:rgb(255, 255, 255);
+            border:1px solid rgb(160, 159, 159);
+            font-weight: bold;
+            font-size: 14px;
+            padding:15px;
         }
         #next_status:hover{
             background-color: rgb(0, 0, 0);
@@ -58,7 +64,7 @@
 </head>
     <div style="display: flex;justify-content: center;">
         <div
-            style="border:2px solid rgb(0, 0, 0);margin:20vh;padding:50px;border-radius: 10px;color: rgb(10, 9, 9);width: 60%;height: 100%;box-shadow: 0px 20px 10px;">
+            style="margin:20vh;padding:50px;border-radius: 10px;color: rgb(10, 9, 9);width: 60%;height: 100%;">
             <h3 style="color: rgb(0, 0, 0);margin: 0px;font-weight: bold;">Order Details</h3>
             <p style="font-size: 12px;margin: 0px 2px;">see the details of this order</p>
             <div id="message" style="color: rgb(231, 6, 6);font-size: 12px;"></div>
@@ -74,6 +80,10 @@
                 <div style="display: flex;justify-content: space-between;margin: 10px;">
                     <p class="column">Product Name</p>
                     <p type="password" id="user_password" class="column lightfont">{{order.product.name}}</p>
+                </div> 
+                <div style="display: flex;justify-content: space-between;margin: 10px;">
+                    <p class="column">Product ID</p>
+                    <p type="password" id="user_password" class="column lightfont">{{order.product.id}}</p>
                 </div>                
                 <div style="display: flex;justify-content: space-between;margin: 10px;">
                     {% if next_status == '' %}
@@ -129,58 +139,7 @@
     </div>
 
     <script>
-        function validate() {
-            var user_email = document.getElementById('user_email').value
-            var user_email_err = document.getElementById('user_email_err')
-            var user_password = document.getElementById('user_password').value
-            var user_password_err = document.getElementById('user_password_err')
-            var message = document.getElementById('message')
-            if (user_email == '') {
-                console.log('Email field cannot be empty');
-                user_email_err.innerHTML = 'Email field cannot be empty.'
-            }            
-            else if (user_password == '') {
-                console.log('Password cannot be empty');
-                user_password_err.innerHTML = 'Password Cannot be empty'
-            }
-            else {
-                console.log('trying to log in with user data');
-                try_to_signin(user_email,user_password)
-            }
-        }
-
-        function try_to_signin(user_email,user_password){
-
-            $.ajaxSetup({
-                data:{csrfmiddlewaretoken :'{{ csrf_token }}'}
-            })
-
-            $.ajax({
-                url:'/user_sign_in',
-                method:'post',
-                data:{'user_email':user_email,'user_password':user_password},
-                success:function(response){
-                    resp = response['user_authentication_status']
-                    if(resp == 'user_not_found'){
-                        console.log('user_not_found_error')
-                        message.innerHTML = 'user not found'
-                    }
-                    else if(resp == 'wrong_password'){
-                        console.log('wrong password error')
-                        message.innerHTML='wrong password'
-                    }                    
-                    else if(resp == 'user_not_active'){
-                        console.log('user is not active')
-                        message.innerHTML='user is not active'
-                    }
-                    else if(resp == 'success'){
-                        console.log('user is nice')
-                        window.location.href='/user_home'
-                    }
-                    // window.location.href = '/user_home'
-                },
-            })
-        }
+       
 
         function status_change(order_id){
 

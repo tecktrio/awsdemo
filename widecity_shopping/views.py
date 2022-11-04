@@ -35,7 +35,7 @@ delivery_charge = 10
 
 
 def root(request):
-
+    '''This function'''
     data = request.GET.keys()
 
     print('data',data)
@@ -48,7 +48,7 @@ def root(request):
 @never_cache
 def user_home(request):
     user = ''
-
+    print(root.__doc__)
     # gathering neccessary data from the server
     try:
         banner1 = Banners.objects.get(id=1)  # getting the banner data
@@ -224,6 +224,7 @@ def user_category_view(request, name):
 
 
 def user_add_to_cart(request):
+    print('trying to add product to the cart')
     response = 'failed'
     if request.method == 'POST':
         if 'user' in request.session:
@@ -237,7 +238,7 @@ def user_add_to_cart(request):
             print('offer applied ', total_price)
             new_cart_product = Cart.objects.create(
                 product_id=product_id,
-                user_id=user,
+                user_id=user.id,
                 quantity=1,
                 total_price=int(total_price),
             )
@@ -963,18 +964,19 @@ def user_account(request):
 
 
 def user_otp_sign_in(request):
+    otp_sign_in_user_status = ''
     if request.method == 'POST':
         user_contact_number = request.POST.get('user_contact_number')
         try:
             print(user_contact_number)
-            user = Users.objects.get(contact_number=int(user_contact_number))
+            user = Users.objects.get(contact_number=user_contact_number)
             print(user.contact_number)
             if user is not None:
                 print('found the user')
                 # generate otp and send otp
                 # setting up the variables with the data that we get from the message api ( twilio )
                 account_sid = 'ACd9fe7f948f2b0de94a1502c2998c884e'
-                auth_token = '59a1424f9a3f2f933da5811c92d52fdd'
+                auth_token = 'd69ec50d7f2dde2e1a298d998c01052f'
                 # verifying the client usig the above details
                 print('trying to connect with twilio.......')
                 client = Client(account_sid, auth_token)
@@ -986,15 +988,13 @@ def user_otp_sign_in(request):
                 # setting up the message to send
                 print('getting your otp (message) ready to send....')
                 try:
-                    client.api.account.messages.create(
-                        to="+919946658045",
-                        from_="+18304980732",
-                        body="welcome to widecity shopping, enjoy shopping with us. This is your otp : {}".format(
-                            otp)
-                    )
-                    print(f'otp has been send to +91  successfully')
-                    otp_sign_in_user_status = 'success'
-                    request.session['user'] = user.email
+                    message = client.messages \
+                        .create(
+                            body='Phantom Menace was clearly the best of the prequel trilogy.',
+                            messaging_service_sid='MG325c8d09bb4a59cb036125616ad3d750',
+                            to='+91{}'.format(9946658045)
+                        )
+                            
                 except:
                     print('sry, failed to send the otp')
                     otp_sign_in_user_status = 'failed_to_send_otp'
@@ -1273,7 +1273,7 @@ def admin_add_category(request):
                 category_id = Category.objects.get(name=str(name))
                 if category_id is not None:
                     print('category already exist')
-                    return render(request, 'admin_add_category.html', {'form': form, 'message': 'category already exist', 'admin': admin})
+                    return render(request, 'admin_add_category.html', {'form': form, 'message': 'category already exist', 'admin': this_admin})
 
             except:
                 # adding new details to the company_info table/model
@@ -1317,13 +1317,15 @@ def admin_order_details(request, order_id):
     if order.status == 'ordered':
         next_status = 'shipped'
     elif order.status == 'shipped':
+        next_status = 'Out For Delivery'
+    elif order.status == 'Out For Delivery':
         next_status = 'delivered'
     elif order.status == 'return requested':
         next_status = 'Returned'
     elif order.status == 'Returned':
         next_status = 'Refunded'
     else:
-        next_status = ''
+        next_status = 'Pending'
 
     return render(request, 'admin_order_details.html', {'order': order, 'address': address, 'next_status': next_status, 'admin': this_admin})
 
@@ -1533,7 +1535,6 @@ def admin_edit_Product(request):
         product.description = request.POST.get('product_description')
         product.specification = request.POST.get('product_specification')
         product.stock_available = request.POST.get('product_stock_available')
-        product.rating = request.POST.get('product_rating')
         product.available_status = request.POST.get('product_status')
 
         if request.FILES.get('image_1') == None:
@@ -1562,7 +1563,6 @@ def admin_edit_Product(request):
             os.remove(product.image_4.path)
             product.image_4 = request.FILES.get('image_4')
 
-        product.offer_percentage = request.POST.get('offer_percentage')
         product.save()
         return render(request, 'admin_edit_product_success.html')
 
@@ -1570,9 +1570,10 @@ def admin_edit_Product(request):
     product_id = request.GET['product_id']
     print(action)
     product = Products.objects.get(id=product_id)
+    categories = Category.objects.all()
 
     if action == 'edit':
-        return render(request, 'admin_edit_product.html', {'product': product, 'admin': this_admin})
+        return render(request, 'admin_edit_product.html', {'product': product, 'admin': this_admin,'categories':categories})
     elif action == 'delete':
         os.remove(product.image_1.path)
         os.remove(product.image_2.path)
@@ -1585,6 +1586,13 @@ def admin_edit_Product(request):
 
 
 def admin_edit_category(request, cat_id):
+    admin = ''
+    if 'admin' in request.session:
+        admin = request.session['admin']
+    else:
+        return redirect('/admin_sign_in')
+    this_admin = Users.objects.get(email=admin)
+
     category = Category.objects.get(id=cat_id)
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -1601,7 +1609,7 @@ def admin_edit_category(request, cat_id):
         category.name = name
         category.save()
 
-    return render(request, 'admin_edit_category.html', {'category': category})
+    return render(request, 'admin_edit_category.html', {'category': category,'admin':this_admin})
 
 
 def admin_edit_banner(request):
