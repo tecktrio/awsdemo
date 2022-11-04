@@ -54,7 +54,7 @@
             border:1px solid rgb(160, 159, 159);
             font-weight: bold;
             font-size: 14px;
-            padding:15px;
+            padding:2%;
         }
         #next_status:hover{
             background-color: rgb(0, 0, 0);
@@ -62,30 +62,29 @@
         }
     </style>
 </head>
-    <div style="display: flex;justify-content: center;">
-        <div
-            style="margin:20vh;padding:50px;border-radius: 10px;color: rgb(10, 9, 9);width: 60%;height: 100%;">
+    <main id="main" class="main">
+        <div  style="padding:10%;border-radius: 10px;color: rgb(10, 9, 9);">
             <h3 style="color: rgb(0, 0, 0);margin: 0px;font-weight: bold;">Order Details</h3>
             <p style="font-size: 12px;margin: 0px 2px;">see the details of this order</p>
             <div id="message" style="color: rgb(231, 6, 6);font-size: 12px;"></div>
             <div style="margin-top: 10px;">
-                <div style="display: flex;justify-content: space-between;margin: 10px;">
+                <div style="display: flex;justify-content: space-between;margin-top: 3px;">
                     <p class="column">Name</p>
                     <p type="text" id="user_email" class="column lightfont">{{order.user.full_name}}</p>
                 </div>
-                <div style="display: flex;justify-content: space-between;margin: 10px;">
+                <div style="display: flex;justify-content: space-between;margin-top: 3px;">
                     <p class="column">contact Number</p>
                     <p type="password" id="user_password" class="column lightfont">{{order.user.contact_number}}</p>
                 </div>
-                <div style="display: flex;justify-content: space-between;margin: 10px;">
+                <div style="display: flex;justify-content: space-between;margin-top: 3px;">
                     <p class="column">Product Name</p>
                     <p type="password" id="user_password" class="column lightfont">{{order.product.name}}</p>
                 </div> 
-                <div style="display: flex;justify-content: space-between;margin: 10px;">
+                <div style="display: flex;justify-content: space-between;margin-top: 3px;">
                     <p class="column">Product ID</p>
                     <p type="password" id="user_password" class="column lightfont">{{order.product.id}}</p>
                 </div>                
-                <div style="display: flex;justify-content: space-between;margin: 10px;">
+                <div style="display: flex;justify-content: space-between;margin-top: 3px;">
                     {% if next_status == '' %}
                     {% else %}
                     <p class="column">Change status to</p>
@@ -94,7 +93,7 @@
                 </div> 
                 <div >
                     <div class="column">Ordered Address</div>
-                    <div style="border: 1px solid rgb(0, 0, 0);border-radius:10px;padding:25px;width: 100%;margin: 10px;">
+                    <div style="border: 1px solid rgb(0, 0, 0);border-radius:10px;padding:3%;width: 100%;">
 
                         <div style="display: flex;justify-content: space-between;">      
                             <label>Email Address</label>                 
@@ -136,7 +135,7 @@
                 </div>  
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
        

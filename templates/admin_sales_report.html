@@ -10,10 +10,11 @@
     .select_date{
       margin:0px;
       border-radius: 5px;
-      background-color: rgb(0, 0, 0);
+      background-color: rgb(13, 100, 150);
+      border:1px solid rgb(156, 154, 154);
       color: white;
       font-size: 14px;
-      padding:5px 15px;
+      padding:10px 15px;
     }
   </style>
 </head>
@@ -22,61 +23,61 @@
 <!--    page title-->
     <div class="pagetitle">
       <h1>Sales Report</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item">Tables</li>
-          <li class="breadcrumb-item active">General</li>
-        </ol>
-      </nav>
+     
     </div>
 <!-- End Page Title -->
 
         <div class="card" id="here" >
             <div class="card-body">
               <h5 class="card-title">Sales Report</h5>
-<!--              <p>Add <code>.table-bordered</code> for borders on all sides of the table and cells.</p>-->
-
-<!--Beginning of select duration-->
-                <!-- <form action="/admin_sales_report" method="POST">
-                  {% csrf_token %} -->
                   <div  id="duration">
                   <form action="/admin_sales_report" method="post">
                     {% csrf_token %}
                     <input  name="duration" style="display:none">
-                    {% if duration == 'Today' %}
-                    <input type="submit" name="duration" style="background-color: rgb(133, 23, 23);"   value="Today" class="select_date">
-                    {% else %}
-                    <input type="submit" name="duration"  value="Today" class="select_date">
-                    {% endif %}
-                    {% if duration == 'Month' %}
-                    <input type="submit" name="duration" value="Month" style="background-color: rgb(113, 38, 38);" class="select_date">
-                    {% else %}
-                    <input type="submit" name="duration" value="Month"  class="select_date">
-                    {% endif %}
-                    {% if duration == 'Year' %}
-                    <input type="submit" name="duration"  value="Year"  style="background-color: rgb(122, 39, 39);"  class="select_date">
-                    {% else %}
-                    <input type="submit" name="duration"  value="Year"  class="select_date">
-                    {% endif %}
+                    
+                  <!-- custom -->
+
+                            
+                            <select onchange="submit()" name="current_report_day" class="select_date" style="padding: 10px;" >
+                    
+                              <option style="color:grey;text-align: center;background-color: white;" selected label="Day {{current_report_day}}">{{current_report_day}}</option>
+                              {% for day in '0123456789101213141516171819202' %}
+                              <option style="color:grey;text-align: center;background-color: white;">{{forloop.counter}}</option>
+                              {% endfor %}
+                            </select>
+
+
+                            <select onchange="submit()"  name="current_report_month"  class="select_date" style="padding: 10px;">
+                              <option style="color:grey;text-align: center;background-color: white;" selected label="Month {{current_report_month}}">{{current_report_month}}</option>
+                              {% for month in '012345678912' %}
+                              <option style="color:grey;text-align: center;background-color: white;">{{forloop.counter}}</option>
+                              {% endfor %}
+                            </select>
+
+
+                            <select onchange="submit()" name="current_report_year"  class="select_date" style="padding: 10px;">
+                              <option style="color:grey;text-align: center;background-color: white;" selected label="Year {{current_report_year}}">{{current_report_year}}</option>
+                              {% for year in '0123456789'   %}
+                              <option style="color:grey;text-align: center;background-color: white;">{{10_year_back | add:year}}</option>
+                              {% endfor %}
+                            </select>
+                            <a href="/admin_sales_report"><input type="button"  name="duration"  value="All" id="" class="select_date"></a>
+
+   
                     {% if duration == 'custom' %}
                     <input type="submit" name="duration"  value="custom"  style="background-color: rgb(122, 39, 39);"  class="select_date">
                     <div style="margin: 10px;">
-                      <input type="date" name="from" value="2022-10-19">
-                      <input type="date" name="to" value="2022-10-19" >
+                      <input type="date" name="from" value="2022-10-01">
+                      <input type="date" name="to" value="2022-12-30">
                     </div>
                     <input type="submit" name="duration"  value="custom_search" id=""  style="background-color: rgb(224, 0, 0);" class="select_date" >
                     {% else %}
                     <input type="submit" name="duration"  value="custom" id="" class="select_date">
                     {% endif %}
-                  </form>
-                  </div>
-                    <!-- <tr>
-                        <td style="color:black;font-weight: bold;margin: 10px;"><input type="radio" name="filter_report" style="margin: 10px;" onchange="custom_date('custom_date')" id="custom_checkbox"><span style="color:black; ">Custom Date |</span></td>
-                        <td style="color:black;font-weight: bold;margin: 10px;"><span style="color:black; "><input type="radio"></span><input type="number" name="filter_report" style="margin: 10px;"onchange="submit()" style="color:black; " value="this_year" placeholder="YYYY" min="1999" max="2022"></td> -->
 
-                    <!-- </tr> -->
-                  <!-- </form> -->
+                  </form>
+                  
+                  </div>
 
                 <table id="customer_filter_report"  style="display:none;margin: 20px;">
                     <tr>
@@ -89,7 +90,10 @@
                     </tr>
                 </table>
 <!--End of select duration-->
-              <table class="table table-bordered" style="margin-top: 30px;">
+{% if orders %}
+<section>
+  
+  <table class="table table-bordered" style="margin-top: 30px;">
 <!--         titles        -->
                 <thead>
                   <tr>
@@ -125,6 +129,8 @@
 <!--ENDING THE TABLE BODY-->
 
               </table>
+
+
         </div>
         <form action="/admin_sales_report" method="post">
           {% csrf_token %}
@@ -134,6 +140,22 @@
         </form>
       </div>
     </section>
+    {% else %}
+    <div>
+           
+      <div style="text-align: center;margin: 30px;">
+                  <img src="/media/message_images/no data.png"  width="30%">
+
+      </div>
+      <div style="color: black;text-align: center;font-size: 20px;">Oops! You had no sales</div>
+      <p style="color: rgb(133, 127, 127);text-align: center;">
+       you didn't had any sales for the duration that you are searching for.
+      </p>
+   </div>
+    {% endif %}
+
+    </section>
+
  <!-- Left/Start Pagination -->
  <form action="/admin_sales_report" method="POST">
   {% csrf_token %}

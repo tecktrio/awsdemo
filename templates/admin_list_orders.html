@@ -9,7 +9,7 @@
       color: white;
       border: none;
       font-size: 12px;
-      padding: 5px 10px;
+      padding: 5% 15%;
       align-items: center;
     }
     #view:hover {
@@ -19,17 +19,18 @@
       text-align: left;
       color: rgb(85, 83, 83);
       font-weight: normal;
+      font-size: 1rem;
     }
   </style>
 </head>
 
 
-<main id="main" class="main">
-  <div class="card">
+<main id="main" class="main" style="background-color: rgb(255, 255, 255);">
+  <div style="background-color: rgb(255, 255, 255);">
     <div class="card-body">
       <h5 class="card-title">All Orders</h5>
       {% if orders %}
-      <table class="table table-sm">
+      <table class="table table-sm col-lg-12 col-md-12">
         <thead>
           <tr>
             <th scope="col" style="text-align:left;">USER NAME</th>
@@ -56,7 +57,7 @@
             {% elif order.status == 'delivered' %}
             <td class="data" style="background-color: rgb(59, 109, 52);color: white;text-align: center;border-radius: 5px;padding: 3px;">Delivered</td>          
             {% elif order.status == 'return requested' %}
-            <td class="data" style="background-color: rgb(210, 11, 11);color: white;text-align: center;border-radius: 5px;padding: 3px;">Return Request</td>            
+            <td class="data" style="background-color: rgb(210, 11, 11);color: white;text-align: center;border-radius: 5px;padding: 3px">Return Request</td>            
             {% elif order.status == 'Refunded' %}
             <td class="data" style="background-color: rgb(207, 205, 202);color: white;text-align: center;border-radius: 5px;padding: 3px;">Refunded</td>           
             {% elif order.status == 'Returned' %}

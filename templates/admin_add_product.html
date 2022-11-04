@@ -5,29 +5,11 @@
 
 <head>
   <style>
-    .not-visible,
-    #id_description,
-    #id_specification,
-    #id_stock_available,
-    #id_rating,
-    #id_total_sold,
-    #id_is_trusted,
-    #id_available_status,
-    #id_arrival_date,
-    #id_end_date,
-    #id_price,
-    #id_image_1,
-    #id_image_2,
-    #id_name,
-    #id_image_3,
-    #id_image_4,
-    #id_category {
-      display: block;
-    }
 
     .label {
       color: rgb(93, 89, 89);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      font-size: 1rem;
     }
   </style>
 </head>
@@ -42,20 +24,20 @@
 
   <section class="section">
     <div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="card" style="background-color: rgb(255, 255, 255);">
           <div class="card-body">
             <h5 class="card-title" style="margin-bottom: 0px;color:rgb(0, 0, 0);margin-bottom: 0px;">Make sure the details are correct</h5>
             <p
-              style="color: rgb(129, 131, 139);font-weight:normal ;margin-top: 0px;margin-bottom: 50px;color:rgb(0, 0, 0);font-size: 13px;">
+              style="color: rgb(129, 131, 139);font-weight:normal ;margin-top: 0px;margin-bottom: 2%;color:rgb(0, 0, 0);font-size: 13px;">
               Enter the information of the product exactly as it is</p>
               <hr style="background-color: black;height: 2px;">
             <!-- user data  -->
             <form method="POST" enctype="multipart/form-data"
-              style="color: rgb(83, 83, 83);font-weight:bold ;background-color: rgb(255, 255, 255);padding: 30px;border-radius: 10px;">
+              style="color: rgb(83, 83, 83);font-weight:bold ;background-color: rgb(255, 255, 255);padding: 5%;border-radius: 10px;">
               {% csrf_token %}
               <div id="message" style="color:red ;font-size: 15px;"></div>
-              <div class="col-md-12" style="display:flex;justify-content:space-between;margin-top:10px;">
+              <div class="col-md-12 " style="display:flex;justify-content:space-between;margin-top:10px;">
                 <label class="form-label label">NAME</label>
                 {{form.name}}
               </div>

@@ -4,11 +4,16 @@
 <!-- ======= Sidebar ======= -->
 
 <head>
+  <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+
   <style>
     #table_title {
-      color: rgb(5, 5, 6);
+      color: rgb(115, 115, 117);
       text-transform: uppercase;
+      font-size: 1rem;
     }
+
+
   </style>
 </head>
 <main id="main" class="main">
@@ -17,7 +22,7 @@
   </div><!-- End Page Title -->
   <section class="section">
     <div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title"></h5>
@@ -43,7 +48,7 @@
                       <div style="display:flex ;justify-content: space-between;">
                           <p>UnBlocked</p>
                           <input class="form-check-input" type="checkbox" id="active{{user.email}}"
-                          onchange="update_status('{{user.email}}')">
+                          onchange="update_status('{{user.email}}')" >
                       </div>
                      
                       {% else %}
@@ -72,29 +77,60 @@
 <script>
   $(document).ready(function () {
     console.log('your document is ready');
+    
   })
   function update_status(email) {
-    status = document.getElementById('active' + email).checked
-    $.ajaxSetup({
-      data: { csrfmiddlewaretoken: '{{csrf_token}}' },
-    });
-    $.ajax({
-      url: '/admin_update_user_status',
-      data: { 'status': status, 'email': email },
-      method: 'POST',
-      success: function (response) {
-        if (response['status'] == 'block') {
-          console.log('user blocked successfully')
+
+        Swal.fire({
+        title: 'You are trying to change the status of your customer?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'I know',
+        cancelButtonText: 'Go back',
+        }).then((result) => {
+            status = document.getElementById('active' + email).checked
+            console.log(status)
+        /* Read more about isConfirmed, isDenied below */
+        console.log(result)
+          if(result.value == true){
+              change()
+          }else{
+
+            if(status == 'true'){
+              document.getElementById('active' + email).checked = false
+            }
+            else if(status == 'false'){
+              document.getElementById('active' + email).checked = true
+            }
+          }
+  
+        })
+        
+
+        function change(){
+            status = document.getElementById('active' + email).checked
+            $.ajaxSetup({
+            data: { csrfmiddlewaretoken: '{{csrf_token}}' },
+            });
+            $.ajax({
+            url: '/admin_update_user_status',
+            data: { 'status': status, 'email': email },
+            method: 'POST',
+            success: function (response) {
+            if (response['status'] == 'block') {
+            console.log('user blocked successfully')
+            }
+            else if (response['status'] == 'active') {
+            console.log('user is now active')
+            }
+            window.location.reload()
+            },
+            error: function () {
+            console.log('ajax is not working')
+            }
+            });
         }
-        else if (response['status'] == 'active') {
-          console.log('user is now active')
-        }
-        window.location.reload()
-      },
-      error: function () {
-        console.log('ajax is not working')
-      }
-    });
+       
   };
 </script>
 

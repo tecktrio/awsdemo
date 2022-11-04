@@ -1,6 +1,7 @@
 
 from dataclasses import field
 from tkinter import Widget
+from tkinter.tix import Select
 from django import forms
 from django.forms import NumberInput,Textarea,TextInput
 
@@ -29,11 +30,11 @@ class add_product_form(forms.ModelForm):
                 ]
         widgets = {
             'manufacturing_date':DateInput(),
-            'name':TextInput(attrs={'style':'width:400px;border:2px solid grey;border-radius:10px;padding:20px;font-weight:bold;'}),
-            'description':Textarea(attrs={'style':'width:400px;height:200px;border:2px solid grey;border-radius:10px;padding:10px;font-weight:bold;'}),
-            'specification':Textarea(attrs={'style':'width:400px;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;'}),
-            'stock_available':NumberInput(attrs={'style':'width:400px;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;'}),
-            'price':NumberInput(attrs={'style':'width:400px;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;','min':1}),
+            'name':TextInput(attrs={'style':'width:40%;border:1px solid grey;border-radius:10px;padding:1%;font-weight:bold;','onmouseover':'(this.placeholder = "Enter the Product Name")','onmouseout':'(this.placeholder = "")'}),
+            'description':Textarea(attrs={'style':'width:40%;height:200px;border:2px solid grey;border-radius:10px;padding:10px;font-weight:bold;','onmouseover':'(this.placeholder = "write a short description about the product...")','onmouseout':'(this.placeholder = "")'}),
+            'specification':Textarea(attrs={'style':'width:40%;border:2px solid grey;border-radius:10px;;padding:5%;font-weight:bold;','onmouseover':'(this.placeholder = "Please Provide the Specification of the current product...")','onmouseout':'(this.placeholder = "")'}),
+            'stock_available':NumberInput(attrs={'style':'width:40%;border:2px solid grey;border-radius:10px;;padding:1%;font-weight:bold;','onmouseover':'(this.placeholder = "Enter the total stiock available")','onmouseout':'(this.placeholder = "")'}),
+            'price':NumberInput(attrs={'style':'width:40%;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;','min':1,'onmouseover':'(this.placeholder = "Enter the price of the product")','onmouseout':'(this.placeholder = "")'}),
         }
 
 class add_product_images_form(forms.ModelForm):

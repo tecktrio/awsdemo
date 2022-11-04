@@ -29,6 +29,7 @@ current_date = datetime.date.today()
 duration = 'Today'
 otp = '0'
 delivery_charge = 10
+orders = ''
 # end of global variables
 
 # handling user side
@@ -1331,7 +1332,12 @@ def admin_order_details(request, order_id):
 
 
 def admin_get_graph_data(request):
-
+    admin = ''
+    if 'admin' in request.session:
+        admin = request.session['admin']
+    else:
+        return redirect('/admin_sign_in')
+    this_admin = Users.objects.get(email=admin)
     sales_graph_data = []
     sales_graph_category = []
     user_graph_data = []
@@ -1501,7 +1507,7 @@ def admin_get_graph_data(request):
         'customer_count': user_count,
         'sales': sales.count(),
         'revenue': revenue,
-
+        'admin':this_admin,
         'sales_graph_data': sales_graph_data,
         'sales_graph_category': sales_graph_category,
 
@@ -1614,81 +1620,61 @@ def admin_edit_category(request, cat_id):
 
 def admin_edit_banner(request):
     admin = ''
+    if 'admin' in request.session:
+        admin = request.session['admin']
+    else:
+        return redirect('/admin_sign_in')
+    this_admin = Users.objects.get(email=admin)
 
     try:
-        
         banner1 = Banners.objects.get(id=1)
         banner2 = Banners.objects.get(id=2)
         banner3 = Banners.objects.get(id=3)
     except:
        return render(request,'admin_add_banner.html')
 
-
-    if 'admin' in request.session:
-        admin = request.session['admin']
-    else:
-        return redirect('/admin_sign_in')
-
-    # if banner1 == None:
-    #      return render(request,'admin_add_banner.html')
-
-
-
     if request.method == 'POST':
-
         if request.POST.get('banner') == '1':
-
-            
             banner_1_image = request.FILES.get('banner_1_image')
-
-          
-
-        # banner_2_image = request.FILES('banner_2_image')
-        # banner_3_image = request.FILES('banner_3_image')
-
             banner_1_heading = request.POST.get('banner_1_heading')
             banner_1_description = request.POST.get('banner_1_description')
-
             banner_1 = Banners.objects.get(id=1)
             banner_1.heading = banner_1_heading
             banner_1.description = banner_1_description
-            os.remove(banner_1.image.path)
-            banner_1.image = banner_1_image
+            if banner_1_image != None:
+                os.remove(banner_1.image.path)
+                banner_1.image = banner_1_image
             banner_1.save()
+            return redirect(admin_edit_banner)
 
         if request.POST.get('banner') == '2':
-
-            # banner_1_image = request.FILES('banner_1_image')
             banner_2_image = request.FILES.get('banner_2_image')
-        # banner_3_image = request.FILES('banner_3_image')
-
             banner_2_heading = request.POST.get('banner_2_heading')
             banner_2_description = request.POST.get('banner_2_description')
-
             banner_2 = Banners.objects.get(id=2)
             banner_2.heading = banner_2_heading
             banner_2.description = banner_2_description
-            os.remove(banner_2.image.path)
-            banner_2.image = banner_2_image
+            if banner_2_image != None:
+                os.remove(banner_2.image.path)
+                banner_2.image = banner_2_image
             banner_2.save()
+            return redirect(admin_edit_banner)
 
         if request.POST.get('banner') == '3':
-
-            # banner_1_image = request.FILES('banner_1_image')
-            # banner_2_image = request.FILES('banner_2_image')
             banner_3_image = request.FILES.get('banner_3_image')
-
             banner_3_heading = request.POST.get('banner_3_heading')
             banner_3_description = request.POST.get('banner_3_description')
-
             banner_3 = Banners.objects.get(id=3)
             banner_3.heading = banner_3_heading
             banner_3.description = banner_3_description
-            os.remove(banner_3.image.path)
-            banner_3.image = banner_3_image
+            if banner_3_image != None:
+                os.remove(banner_3.image.path)
+                banner_3.image = banner_3_image
             banner_3.save()
+            return redirect(admin_edit_banner)
 
-    return render(request, 'admin_edit_banner.html', {'banner1': banner1, 'banner2': banner2, 'banner3': banner3})
+
+    return render(request, 'admin_edit_banner.html', {'banner1': banner1, 'banner2': banner2, 'banner3': banner3,'admin':this_admin})
 
 def admin_add_banner(request):
     if request.method == 'POST':
@@ -1715,7 +1701,7 @@ def admin_add_banner(request):
         banner1_add.save()
         banner2_add.save()
         banner3_add.save()
-        return HttpResponse('banner added')
+        return redirect(admin_edit_banner)
 
     return HttpResponse('banner failed to add')
 
@@ -1773,166 +1759,172 @@ def admin_edit_company_info(request):
 
 def admin_sales_report(request):
     ppp = 4  # product per page in sales report
+    global duration,orders
     admin = ''
-    global duration
     if 'admin' in request.session:
         admin = request.session['admin']
     else:
         return redirect('/admin_sign_in')
+    this_admin = Users.objects.get(email=admin)
+    if 'duration' in request.POST.keys():
+        orders = Orders.objects.all()
+        current_page = 1
+        if 'page_number' in request.POST.keys():
+            current_page = request.POST.get('page_number')
+            print('got page_number', current_page)
 
-    # if request.method == 'GET':
-    #     page = request.GET['page']
+        duration = request.POST.get('duration')
+        print(duration)
 
-    if request.method == 'POST':
+        if duration == 'custom_search':
+            from_date = request.POST.get('from')
+            to_date = request.POST.get('to')
 
-        if 'export' in request.POST.keys():
-            filetype = request.POST.get('filetype')
-            if filetype == 'pdf':
-                buf = io.BytesIO()
-                c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
-                textob = c.beginText()
-                textob.setTextOrigin(inch, inch)
-                textob.setFont("Helvetica", 10)
+            from_date = from_date.split('-')
+            to_date = to_date.split('-')
+            from_day = from_date[2]
+            from_month = from_date[1]
+            from_year = from_date[0]
+            to_day = to_date[2]
+            to_month = to_date[1]
+            to_year = to_date[0]
 
-                if duration == 'Today':
-                    ordered_products = Orders.objects.filter(
-                        Order_day=current_date.day)
-                if duration == 'Month':
-                    ordered_products = Orders.objects.filter(
-                        Order_month=current_date.month)
-                if duration == 'Year':
-                    ordered_products = Orders.objects.filter(
-                        Order_year=current_date.year)
+            print('trying to filter the sales report from the date',from_day,'/',from_month,'/',from_year,' to ',to_day,'/',to_month,'/',to_year)
 
-                lines = [
-                    'Sales Report of WideCity Shopping ',
-                    '',
-                    '      Date      |       brand       |                       product name                     |  sold   |   stock balance  |   revenue  ',
-                    '',
+            for order in orders:
+                orders = Orders.objects.filter(
+                    Order_day__gte=int(from_day),
+                    Order_month__gte=int(from_month),
+                    Order_year__gte=int(from_year),
+                    Order_day__lte=int(to_day),
+                    Order_month__lte=int(to_month),
+                    Order_year__lte=int(to_year),
+          )
 
-                ]
-                for orders in ordered_products:
+            p = Paginator(orders, ppp)
+            page_obj = p.get_page(current_page)
+            available_pages = []
+            pages = int(orders.count()/ppp)
+            for i in range(pages):
+                available_pages.append(i)
 
-                    lines.append(str(orders.Order_day) +
-                                 str('/'+str(orders.Order_month)) +
-                                 str('/'+str(orders.Order_year)) +
-                                 str('         '+str(orders.product.category)) +
-                                 str('        '+str(orders.product.name)) +
-                                 str('       '+str(orders.product.total_sold)) +
-                                 str('            '+str(orders.product.stock_available)) +
-                                 str('                 ' +
-                                     str(orders.product.price))
+            return render(request, 'admin_sales_report.html', {
+                'admin': this_admin,
+                'orders': page_obj,
+                '10_year_back': int(current_date.year)-9,
+                'duration': duration,
+                'current_date': current_date,
+                'available_pages': available_pages,
+                'current_report_day': 0,
+                'current_report_month': 0,
+                'current_report_year': 0,
+                })
 
-                                 )
+        if 'current_report_year' in request.POST.keys():
+                picked_year = request.POST.get('current_report_year')
+                picked_month = request.POST.get('current_report_month')
+                picked_date = request.POST.get('current_report_day')
 
-                    lines.append(
-                        "-----------------------------------------------------------------------------------------------------------------------------------")
+                current_report_year = int(picked_year)
+                current_report_month =int(picked_month)
+                current_report_day = int(picked_date)
+                
+                orders = Orders.objects.filter(Order_year=picked_year,Order_month = picked_month,Order_day = picked_date)
+        
+        p = Paginator(orders, ppp)
+        page_obj = p.get_page(current_page)
+        available_pages = []
+        pages = int(orders.count()/ppp)
+        for i in range(pages):
+            available_pages.append(i)
+        return render(request, 'admin_sales_report.html', {
+            'admin': this_admin,
+            'orders': page_obj,
+            '10_year_back': int(current_date.year)-9,
+            'duration': duration,
+            'current_date': current_date,
+            'available_pages': available_pages,
+            'current_report_day': current_report_day,
+            'current_report_month': current_report_month,
+            'current_report_year': current_report_year,
+            })
 
-                lines.append('')
-                lines.append('This report is of the duration of last 7 days')
+    
+    elif 'export' in request.POST.keys():
 
-                for line in lines:
-                    textob.textLine(line)
+        filetype = request.POST.get('filetype')
+        if filetype == 'pdf':
+            buf = io.BytesIO()
+            c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+            textob = c.beginText()
+            textob.setTextOrigin(inch, inch)
+            textob.setFont("Helvetica", 10)
 
-                c.drawText(textob)
-                c.showPage()
-                c.save()
-                buf.seek(0)
+            lines = [
+                'Sales Report of WideCity Shopping ',
+                'This Report is Generated by widecityshopping.tk',
+                '',
+                '',
+                '',
+            ]
+            
+            for order in orders:
+                print(order.product.name)
+                lines.append(
+                            str(str(order.product.name)) +
+                            str('    '+str(order.Order_day)) +
+                            str('/'+str(order.Order_month)) +
+                            str('/'+str(order.Order_year)) +
+                            str('         '+str(order.product.category)) +
+                            str('                 ' + str(order.product.price))
+                            )
 
-                return FileResponse(buf, as_attachment=True, filename='output.pdf ')
+                lines.append(
+                    "-----------------------------------------------------------------------------------------------------------------------------------")
 
-            elif filetype == 'csv':
+            lines.append('')
+            lines.append('Have a Nice Day!')
+            for line in lines:
+                textob.textLine(line)
+            c.drawText(textob)
+            c.showPage()
+            c.save()
+            buf.seek(0)
+            return FileResponse(buf, as_attachment=True, filename='output.pdf')
 
-                # output filename handling
-                filename = 'Widecity Report'
-                response = HttpResponse(content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename={}.csv'.format(
-                    filename)
-                writer = csv.writer(response)
-                writer.writerow(['Product Name', 'Ordered Day', 'Ordered Month',
-                                'Ordered Year', 'Quantity', 'Total Price'])
-                if duration == 'Today':
-                    ordered_products = Orders.objects.filter(
-                        Order_day=current_date.day)
-                if duration == 'Month':
-                    ordered_products = Orders.objects.filter(
-                        Order_month=current_date.month)
-                if duration == 'Year':
-                    ordered_products = Orders.objects.filter(
-                        Order_year=current_date.year)
+        elif filetype == 'csv':
+            # output filename handling
+            filename = 'Widecity Report'
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename={}.csv'.format(
+                filename)
+            writer = csv.writer(response)
+            writer.writerow(['Product Name', 'Ordered Day', 'Ordered Month',
+                            'Ordered Year', 'Quantity', 'Total Price'])
+            if duration == 'Today':
+                ordered_products = Orders.objects.filter(
+                    Order_day=current_date.day)
+            if duration == 'Month':
+                ordered_products = Orders.objects.filter(
+                    Order_month=current_date.month)
+            if duration == 'Year':
+                ordered_products = Orders.objects.filter(
+                    Order_year=current_date.year)
 
-                for product in ordered_products:
+            for product in ordered_products:
 
-                    print(product.product.name)
-                    print(product.Order_day, product.Order_month,
-                          product.Order_year)
-                    print(product.quantity)
-                    print(product.total_price)
+                print(product.product.name)
+                print(product.Order_day, product.Order_month,
+                        product.Order_year)
+                print(product.quantity)
+                print(product.total_price)
 
-                    row = [product.product.name, product.Order_day, product.Order_month,
-                           product.Order_year, product.quantity, product.total_price]
+                row = [product.product.name, product.Order_day, product.Order_month,
+                        product.Order_year, product.quantity, product.total_price]
 
-                    writer.writerow(row)
+                writer.writerow(row)
 
-                return response
-
-        elif 'duration' in request.POST.keys():
-            orders = Orders.objects.all()
-            current_page = 1
-            if 'page_number' in request.POST.keys():
-                current_page = request.POST.get('page_number')
-                print('got page_number', current_page)
-
-            duration = request.POST.get('duration')
-            print(duration)
-            if duration == 'custom_search':
-                from_date = request.POST.get('from')
-                to_date = request.POST.get('to')
-
-                from_date = from_date.split('-')
-                to_date = to_date.split('-')
-
-                from_day = from_date[2]
-                from_month = from_date[1]
-                from_year = from_date[0]
-                to_day = to_date[2]
-                to_month = to_date[1]
-                to_year = to_date[0]
-                for order in orders:
-                    orders = Orders.objects.filter(
-                        Order_day__gte=from_day, Order_day__lte=to_day,
-                        Order_month__gte=from_month, Order_month__lte=to_month,
-                        Order_year__gte=from_year, Order_year__lte=to_year
-                    )
-
-                p = Paginator(orders, ppp)
-                page_obj = p.get_page(current_page)
-                available_pages = []
-                pages = int(orders.count()/ppp)
-                for i in range(pages):
-                    available_pages.append(i)
-                return render(request, 'admin_sales_report.html', {'admin': admin, 'orders': page_obj, 'duration': duration, 'available_pages': available_pages})
-
-            else:
-                if duration == 'Today':
-                    print(duration)
-                    orders = Orders.objects.filter(Order_day=current_date.day)
-                elif duration == 'Month':
-                    print(duration)
-                    orders = Orders.objects.filter(
-                        Order_month=current_date.month)
-                elif duration == 'Year':
-                    print(duration)
-                    orders = Orders.objects.filter(
-                        Order_year=current_date.year)
-
-                p = Paginator(orders, ppp)
-                page_obj = p.get_page(current_page)
-                available_pages = []
-                pages = int(orders.count()/ppp)
-                for i in range(pages):
-                    available_pages.append(i)
-                return render(request, 'admin_sales_report.html', {'admin': admin, 'orders': page_obj, 'duration': duration, 'available_pages': available_pages})
+            return response
 
     orders = Orders.objects.all()
     p = Paginator(orders, ppp)
@@ -1941,8 +1933,17 @@ def admin_sales_report(request):
     pages = int(orders.count()/ppp)
     for i in range(pages):
         available_pages.append(i)
-    return render(request, 'admin_sales_report.html', {'admin': admin, 'orders': page_obj, 'current_date': current_date, 'duration': duration, 'available_pages': available_pages})
-
+    return render(request, 'admin_sales_report.html', {
+            'admin':this_admin ,
+            'orders': page_obj,
+            'current_date': current_date,
+            '10_year_back': int(current_date.year)-9,
+            'duration': duration,
+            'available_pages': available_pages,
+            'current_report_day': current_date.day,
+            'current_report_month': current_date.month,
+            'current_report_year': current_date.year,
+            })
 
 def admin_remove_coupon(request):
     if request.method == 'POST':
