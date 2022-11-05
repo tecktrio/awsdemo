@@ -34,7 +34,7 @@ class add_product_form(forms.ModelForm):
             'description':Textarea(attrs={'style':'width:40%;height:200px;border:2px solid grey;border-radius:10px;padding:10px;font-weight:bold;','onmouseover':'(this.placeholder = "write a short description about the product...")','onmouseout':'(this.placeholder = "")'}),
             'specification':Textarea(attrs={'style':'width:40%;border:2px solid grey;border-radius:10px;;padding:5%;font-weight:bold;','onmouseover':'(this.placeholder = "Please Provide the Specification of the current product...")','onmouseout':'(this.placeholder = "")'}),
             'stock_available':NumberInput(attrs={'style':'width:40%;border:2px solid grey;border-radius:10px;;padding:1%;font-weight:bold;','onmouseover':'(this.placeholder = "Enter the total stiock available")','onmouseout':'(this.placeholder = "")'}),
-            'price':NumberInput(attrs={'style':'width:40%;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;','min':1,'onmouseover':'(this.placeholder = "Enter the price of the product")','onmouseout':'(this.placeholder = "")'}),
+            'price':NumberInput(attrs={'style':'width:40%;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;','min':1,'max':10000,'onmouseover':'(this.placeholder = "Enter the price of the product")','onmouseout':'(this.placeholder = "")'}),
         }
 
 class add_product_images_form(forms.ModelForm):

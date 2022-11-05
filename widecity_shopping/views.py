@@ -1572,9 +1572,10 @@ def admin_edit_Product(request):
         product.save()
         return render(request, 'admin_edit_product_success.html')
 
-    action = request.GET['action']
-    product_id = request.GET['product_id']
+    action = request.GET.get('action')
+    product_id = request.GET.get('product_id')
     print(action)
+    print(product_id)
     product = Products.objects.get(id=product_id)
     categories = Category.objects.all()
 
@@ -1603,7 +1604,6 @@ def admin_edit_category(request, cat_id):
     if request.method == 'POST':
         name = request.POST.get('name')
         image = request.FILES.get('image')
-        offer_percentage = request.POST.get('offer_percentage')
 
         if image is None:
             category.image = Category.objects.get(id=cat_id).image
@@ -1611,9 +1611,9 @@ def admin_edit_category(request, cat_id):
             os.remove(category.image.path)
             category.image = image
 
-        category.offer_percentage = offer_percentage
         category.name = name
         category.save()
+        return redirect(admin_list_category)
 
     return render(request, 'admin_edit_category.html', {'category': category,'admin':this_admin})
 

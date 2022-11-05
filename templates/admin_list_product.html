@@ -32,17 +32,18 @@
   </style>
 </head>
 
-  <main id="main" class="main">
+  <main id="main" class="main container">
     <div class="pagetitle">
       <h1 style="color: rgb(0, 0, 0);"> Product Management</h1>
      
     </div><!-- End Page Title -->
-    <section class="section">
+    <section class="section col-lg-12 col-md-12">
           <div>
             <div >
               <h5 class="card-title" style="color: rgb(0, 0, 0);">Your Products</h5>
 <!--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
               <!-- Default Table -->
+              {% if products %}
               <table class="table">
                 <thead>
                   <tr>
@@ -69,14 +70,13 @@
                     <td><div style="padding: 5px;background-color: rgb(219, 17, 17);width: 50px;"></div></td>
                     {% endif %}
                     <td style="display:flex;">
-                      <form action="/admin_edit_Product" >
-                      <button name="action" type="submit" onclick="return confirm('Be careful while you edit, Are you sure you want to do this?')" value="edit" class="edit">
-                        Edit
-                      </button>
-                      <button name="action" type="submit"  onclick="return confirm('Are you sure to delete this product?')" value="delete" class="delete">
-                        Delete
-                      </button>
-                      <input name = 'product_id'   value="{{product.id}}" style="display: none;">
+                      <form action="/admin_edit_Product" id="sf" method="GET">
+                      <input onclick=" return swal('edit')" value="edit" class="edit">
+                        
+                      <input  onclick=" return swal('delete')" value="delete" class="delete">
+                     
+                      <input name='product_id'   value="{{product.id}}" style="display: none;">
+                      <input name='action' style="display: none;" type="text" id="action">
                       </form>
                     </td>
                   </tr>
@@ -84,10 +84,63 @@
 
                 </tbody>
               </table>
+              {% else %}
+              <div>
+           
+                <div style="text-align: center;margin: 30px;">
+                            <img src="/media/message_images/no data.png"  width="30%">
+              
+                </div>
+                <div style="color: black;text-align: center;font-size: 20px;">Oops! You have no Products</div>
+                <p style="color: rgb(133, 127, 127);text-align: center;">
+                please add some products to manage it.
+                </p>
+              </div>
+              {% endif %}
+             
         </div>
       </div>
     </section>
-
+    <!-- pagination -->
+    <form action="/admin_sales_report" method="POST">
+      {% csrf_token %}
+       <nav aria-label="Page navigation example">
+      <ul class="pagination" >
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        </li>
+        
+        {% for i in available_pages %}
+          <li class="page-item">
+            <input type="text" name="duration" value="{{duration}}"  style="display: none;">
+    <input value ='{{forloop.counter}}' class="page-link" type="submit" name="page_number"></li>
+        {% endfor %}
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav><!-- End Left/Start Pagination -->
+    </form>
   </main><!-- End #main -->
+  <script>
+    function  swal(task){
+      var status = false
+          Swal.fire({
+              title: 'Are you sure? ',
+              showDenyButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'yes',
+              cancelButtonText: 'Go back',
+              }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              // console.log(result)
+              if(result.value == true){
+              document.getElementById('action').value = task
+              document.getElementById('sf').submit()
+              }
+          })
+          return false
+      }
 
+  </script>
 {%endblock%}

@@ -165,11 +165,25 @@
         }
 
 function user_confirm(id){
-    if(confirm('Are you sure?')){
-        status_change(id)
+    Swal.fire({
+        title: 'Are you sure to to change the status of this order?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'yes',
+        cancelButtonText: 'Go back',
+        }).then((result) => {
+            console.log(status)
+        /* Read more about isConfirmed, isDenied below */
+        console.log(result)
+          if(result.value == true){
+            status_change(id)
+
+          }
+  
+        })
         }
             
-}
+
     </script>
 
     {% endblock %}
