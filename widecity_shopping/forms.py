@@ -2,13 +2,9 @@
 from dataclasses import field
 from PIL import Image
 from django import forms
-from django.core.files import File
-from tkinter import Widget
-from tkinter.tix import Select
 from django import forms
 from django.forms import NumberInput,Textarea,TextInput
-from numpy import product
-from widecity_shopping.models import Banners, Category, Products, Subcategory
+from widecity_shopping.models import Banners, Category, Products
 
 
 
