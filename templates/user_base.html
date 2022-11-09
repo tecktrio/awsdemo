@@ -151,8 +151,13 @@
                 <!-- end search -->
                 <div class="header-right " >
                     <div class=" cart-dropdown " >
+                        {% if user == 'guest' %}
                         <a href="/user_account" onclick="return sign_in_permission()" class="dropdown-toggle icon_div" role="button" aria-haspopup="true"
                             aria-expanded="false" data-display="static">
+                        {% else %}
+                        <a href="/user_account" class="dropdown-toggle icon_div" role="button" aria-haspopup="true"
+                        aria-expanded="false" data-display="static">
+                        {% endif %}
                             <i class="icon-user "></i>
                             <div class="icon_c">Account</div>
                             <!-- <span class="cart-count" >2</span> -->
