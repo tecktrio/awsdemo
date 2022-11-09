@@ -1257,7 +1257,7 @@ def admin_add_product(request):
             print(product.image_1)
             print('received_image_1')
             return redirect('/admin_add_product')
-        if upload_status == 2:
+        elif upload_status == 2:
             upload_status = 3
             form =request.FILES.get('image_2')
             print(form)        
@@ -1280,7 +1280,7 @@ def admin_add_product(request):
             image = resized_image.save('media/{}'.format(product.image_2))
             print(product.image_2)
             return redirect('/admin_add_product')
-        if upload_status == 3:
+        elif upload_status == 3:
             upload_status = 4
             form =request.FILES.get('image_3')
             print(form)
@@ -1303,7 +1303,7 @@ def admin_add_product(request):
             image = resized_image.save('media/{}'.format(product.image_3))
             print(product.image_3)
             return redirect('/admin_add_product')
-        if upload_status == 4:
+        elif upload_status == 4:
             upload_status = 0
             form =request.FILES.get('image_4')
             print(form)        
@@ -1327,7 +1327,7 @@ def admin_add_product(request):
             print(product.image_4)
             return redirect(admin_thankyou_for_adding_product)
             # return redirect('/admin_add_product')
-        if upload_status == 0:
+        elif upload_status == 0:
             upload_status = 1
             # checking whether all the input fields are filled,not empty and are filled with proper inputs
             # getting datas from the specific fields from the frontend
