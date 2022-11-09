@@ -1186,7 +1186,7 @@ def admin_panel(request):
 def admin_list_customer(request):
     admin = ''
     current_page = 1
-    ppp = 1
+    ppp = 5
     if 'admin' in request.session:
         admin = request.session['admin']
     else:
@@ -1465,7 +1465,7 @@ def admin_add_category(request):
 @never_cache
 def admin_list_orders(request):
     admin = ''
-    ppp = 1
+    ppp = 5
     current_page = 1
     if 'admin' in request.session:
         admin = request.session['admin']
@@ -1852,7 +1852,7 @@ def admin_add_banner(request):
 @never_cache
 def admin_category_offers(request):
     admin = ''
-    ppp = 1
+    ppp = 5
     current_page = 1
     if 'admin' in request.session:
         admin = request.session['admin']
@@ -1885,7 +1885,7 @@ def admin_category_offers(request):
 @never_cache
 def admin_product_offers(request):
     admin = ''
-    ppp = 1
+    ppp = 5
     current_page = 1
     if 'admin' in request.session:
         admin = request.session['admin']
@@ -1927,7 +1927,7 @@ def admin_edit_company_info(request):
 
 @never_cache
 def admin_sales_report(request):
-    ppp = 1  # product per page in sales report
+    ppp = 5  # product per page in sales report
     current_page = 1
     global duration,orders
     current_report_day  = current_date.day
