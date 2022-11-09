@@ -183,7 +183,7 @@
 									<form id="edit_user" style="display: none; width: 100%;" method="post"
 										action="/user_update_user/{{user.id}}" enctype="multipart/form-data">
 										{% csrf_token %}
-										<input type="submit"
+										<input type="submit" onclick="return permission()"
 											style="background-color: rgb(3, 184, 255); border: none;border-radius: 10px;color: white;"
 											value="Change">
 										<input type="file" id="profile_image_edit" style="margin: 10px;"
@@ -274,28 +274,36 @@
 								console.log(new_pass)
 								if (new_pass == re_new_pass) {
 									// window.location.href = '/user_reset_password'
-									if (confirm('Are you sure to change the current password?')) {
-										$.ajaxSetup({
-											data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
-										})
+									Swal.fire({
+												title: 'Are you sure? ',
+												showDenyButton: true,
+												showCancelButton: true,
+												confirmButtonText: 'yes',
+												cancelButtonText: 'Go back',
+												}).then((result) => {
+													if(result.value == true){
+													$.ajaxSetup({
+														data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
+													})
 
-										$.ajax({
-											url: '/user_reset_password',
-											data: { 'new_pass': new_pass },
-											method: 'post',
-											success: function (response) {
-												window.location.href = '/user_reset_pass_successs';
-											}
-										});
-									}
-								}
+													$.ajax({
+														url: '/user_reset_password',
+														data: { 'new_pass': new_pass },
+														method: 'post',
+														success: function (response) {
+															window.location.href = '/user_account';
+														}
+													});
+												}
+												})}}
+								
 
-							}
+							
 						</script>
 
 						<!--###   my orders   ##############################################################################################################################-->
 
-						<div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link"
+						<section class="tab-pane fade section" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link"
 							style="background-color:rgb(255, 255, 255) ;padding:5px;border-radius:10px;">
 							<table>
 
@@ -356,7 +364,7 @@
 														width="20px" style="width: 20px;"></p>
 											</div>
 											{% endif %}
-											<a href="user_invoice_per_item/{{order.id}}" style="margin: 20px;">
+											<a href="user_invoice_per_item/{{order.id}}"  onclick="return permission()" style="margin: 20px;">
 												<div class="dowload_button"><img src="/media/icons/download_icon.png"
 														width="20px"></div>
 											</a>
@@ -379,7 +387,7 @@
 								title="CLick to download the ordered product details as csv"><span>Download
 									as CSV
 									Copy</span><i class="icon-long-arrow-right"></i></a>
-						</div><!-- .End .tab-pane -->
+						</section><!-- .End .tab-pane -->
 
 
 
@@ -427,24 +435,33 @@
 								<script>
 									function delete_address(address_id) {
 
-										if (confirm('Are you sure to delete the selected address')) {
-											$.ajaxSetup({
-												data: { 'csrfmiddlewaretoken': '{{csrf_token}}' },
-											});
+										Swal.fire({
+												title: 'Are you sure? ',
+												showDenyButton: true,
+												showCancelButton: true,
+												confirmButtonText: 'yes',
+												cancelButtonText: 'Go back',
+												}).then((result) => {
+												/* Read more about isConfirmed, isDenied below */
+												// console.log(result)
+												if(result.value == true){
+													$.ajaxSetup({
+													data: { 'csrfmiddlewaretoken': '{{csrf_token}}' },
+													});
 
 
-											$.ajax({
-												url: '/user_delete_address',
-												method: 'post',
-												data: { 'address_id': address_id },
-												success: function (response) {
+													$.ajax({
+													url: '/user_delete_address',
+													method: 'post',
+													data: { 'address_id': address_id },
+													success: function (response) {
 													console.log('address updated, reloading the page')
 													window.location.reload()
-												}
-											});
-										}
-									}
+													}
+													});
 
+										
+												}})}
 
 								</script>
 							</div><!-- End .row -->
@@ -497,31 +514,70 @@
 </main><!-- End .main -->
 
 <script>
-	function cancel_order(order_id) {
-		console.log(order_id);
-
-		if (confirm('Are you sure to cancel this product?')) {
-			$.ajaxSetup({
-				data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
-			})
-
-			$.ajax({
-				url: '/user_update_order_status',
-				data: { 'order_id': order_id, 'order_status': 'canceled' },
-				method: 'post',
-				success: function (response) {
-					if (response['status'] == 'canceled') {
-						window.location.reload();
-
-					}
-				}
-			});
-		}
-	}
-
+$(document).ready(function(){
+	console.log('i am ready to rock')
+	document.getElementById('tab-orders').scrollIntoView({behavior: 'smooth'}, true);
+	console.log('you are in exact locati')
+})
 	function return_order(order_id) {
 		console.log(order_id)
 		window.location.href = '/user_return_order/' + order_id
 	}
 </script>
+
+<!-- handles the alerts  -->
+
+<script>
+	function  cancel_order(order_id){
+	  var status = false
+		  Swal.fire({
+			  title: 'Are you sure? ',
+			  showDenyButton: true,
+			  showCancelButton: true,
+			  confirmButtonText: 'yes',
+			  cancelButtonText: 'Go back',
+			  }).then((result) => {
+			  /* Read more about isConfirmed, isDenied below */
+			  // console.log(result)
+			  if(result.value == true){
+					$.ajaxSetup({
+					data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
+					})
+
+					$.ajax({
+					url: '/user_update_order_status',
+					data: { 'order_id': order_id, 'order_status': 'canceled' ,'navigate':'tab-orders'},
+					method: 'POST',
+					success: function (response) {
+					if (response['status'] == 'canceled') {
+					window.location.href='/user_account';
+
+					}
+					}
+					});
+			  }
+		  })
+		  return false
+	  }
+
+	function  permission(){
+		var status = false
+			Swal.fire({
+				title: 'Are you sure? ',
+				showDenyButton: true,
+				showCancelButton: true,
+				confirmButtonText: 'yes',
+				cancelButtonText: 'Go back',
+				}).then((result) => {
+				/* Read more about isConfirmed, isDenied below */
+				// console.log(result)
+				if(result.value == true){
+				$('#edit_user').submit()
+				}
+			})
+			return false
+		}
+
+  </script>
+
 {% endblock %}

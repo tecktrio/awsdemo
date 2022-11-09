@@ -40,6 +40,7 @@ image_2 = ''
 image_3 = ''
 image_4 = ''
 cart_count = 0
+navigation =''
 # end of global variables
 # handling user side
 @never_cache
@@ -872,10 +873,12 @@ def user_sign_in(request):
 @never_cache
 def user_update_order_status(request):
     '''handles the user update order status request from the user'''
+    global navigation
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
         order_status = request.POST.get('order_status')
         product = Orders.objects.get(id=order_id)
+        navigation = '#'+str(request.POST.get('navigate'))
         print(product.status)
         product.status = 'canceled'
         product.save()
@@ -961,6 +964,7 @@ def add_to_wallet_history(order):
 @never_cache
 def user_account(request):
     '''handle the user account'''
+    global navigation
     global cart_count
     refered_people = ''
     if 'user' in request.session:
@@ -1003,8 +1007,10 @@ def user_account(request):
         'orders': orders, 
         'address': address, 
         'refered_people_details': peoples,
-        'cart_count':cart_count
+        'cart_count':cart_count,
+        'navigation':navigation
         }
+    
     return render(request, 'user_account.html', context)
 # end
 @never_cache

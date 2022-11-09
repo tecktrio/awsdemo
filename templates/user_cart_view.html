@@ -618,9 +618,17 @@
     }
 
     function user_confirm(id) {
-        if (confirm('The product will be perminently removed from your cart')) {
-            remove_product(id)
-        }
+        Swal.fire({
+            title: 'Are you sure to remove this product from your cart? ',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'yes',
+            cancelButtonText: 'No',
+            }).then((result) => {
+                if(result.value == true){
+                    remove_product(id)
+                }
+        })
     }
 
 </script>

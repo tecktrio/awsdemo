@@ -39,6 +39,7 @@
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+    <script src="{% static 'assets/sweet.js' %}" type="text/javascript" ></script>
 
     <style>
         .color_1 {
@@ -655,8 +656,24 @@
             {
                 if(response['response'] == 'product_added'){
                     console.log('product_added')
-                    window.location.href = '/user_check_cart_or_shop'
+                        Swal.fire({
+                        title: 'Product Added to Cart successfully. ',
+                        showDenyButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'ok',
+                        cancelButtonText: 'view cart',
+                        }).then((result) => {
+                            if(result.value == true){
+                            $.ajaxSetup({
+                                data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
+                            })
+                            }
+                            else{
+                                window.location.href = '/user_view_cart'
+                            }
+                    })
                 }
+            
                 else if(response['response'] == 'user_not_found'){
                     console.log('user not signed in')
                     window.location.href = '/user_sign_in'

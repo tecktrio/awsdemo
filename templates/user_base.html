@@ -39,7 +39,7 @@
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
-
+    <script src="{% static 'assets/sweet.js' %}" type="text/javascript" ></script>
     <style>
         .color_1 {
             color: black;
@@ -123,7 +123,7 @@
                                     <img src="/media/profile/user.jpeg" alt="Profile" style="height: 100%;width: 100%;">
                                 </div>
                                 {% else %}
-                                <li><a href="/user_sign_out">sign out</a></li>
+                                <li><a href="#" onclick="user_signout()">sign out</a></li>
                                 <li>{{user.full_name}}</li>
                                 <div
                                     style="height: 30px ;border-radius:50%;width: 30px;justify-content: center;display: flex;background-color: rgb(243, 255, 243);align-items: center;border:1px solid rgb(120, 114, 114);margin:0px 10px;overflow: hidden;">
@@ -151,7 +151,7 @@
                 <!-- end search -->
                 <div class="header-right " >
                     <div class=" cart-dropdown " >
-                        <a href="/user_account" class="dropdown-toggle icon_div" role="button" aria-haspopup="true"
+                        <a href="/user_account" onclick="return sign_in_permission()" class="dropdown-toggle icon_div" role="button" aria-haspopup="true"
                             aria-expanded="false" data-display="static">
                             <i class="icon-user "></i>
                             <div class="icon_c">Account</div>
@@ -296,6 +296,47 @@
             </div><!-- End .mobile-menu-wrapper -->
         </div><!-- End .mobile-menu-container -->
     <!-- Plugins JS File -->
+
+    <script>
+        function  user_signout(){
+          var status = false
+              Swal.fire({
+                  title: 'Are you sure? ',
+                  showDenyButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: 'yes',
+                  cancelButtonText: 'Go back',
+                  }).then((result) => {
+                  /* Read more about isConfirmed, isDenied below */
+                  // console.log(result)
+                  if(result.value == true){
+                  window.location.href = '/user_sign_out'
+                  }
+              })
+              return false
+          }
+
+          function sign_in_permission(){
+            var status = false
+              Swal.fire({
+                  title: 'sorry, you are in guest mode. Sign in to view your Account. ',
+                  showDenyButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: 'sign in',
+                  cancelButtonText: 'Continue as Guest',
+                  }).then((result) => {
+                  /* Read more about isConfirmed, isDenied below */
+                  // console.log(result)
+                  if(result.value == true){
+                  window.location.href = '/user_sign_in'
+                  }
+              })
+              return false
+          }
+
+          
+    
+      </script>
     <script src="{% static 'assets/js/jquery.min.js' %}"></script>
     <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'assets/js/jquery.hoverIntent.min.js' %}"></script>
