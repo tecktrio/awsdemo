@@ -1256,7 +1256,7 @@ def admin_add_product(request):
             image = resized_image.save('media/{}'.format(product.image_1))
             print(product.image_1)
             print('received_image_1')
-            return redirect('/admin_add_product')
+            # return redirect('/admin_add_product')
         elif upload_status == 2:
             upload_status = 3
             form =request.FILES.get('image_2')
@@ -1279,7 +1279,7 @@ def admin_add_product(request):
             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
             image = resized_image.save('media/{}'.format(product.image_2))
             print(product.image_2)
-            return redirect('/admin_add_product')
+            # return redirect('/admin_add_product')
         elif upload_status == 3:
             upload_status = 4
             form =request.FILES.get('image_3')
@@ -1302,7 +1302,7 @@ def admin_add_product(request):
             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
             image = resized_image.save('media/{}'.format(product.image_3))
             print(product.image_3)
-            return redirect('/admin_add_product')
+            # return redirect('/admin_add_product')
         elif upload_status == 4:
             upload_status = 0
             form =request.FILES.get('image_4')
@@ -1342,8 +1342,8 @@ def admin_add_product(request):
                 form.category = category
                 form.specification = specification
                 form.save()
-                return redirect('/admin_add_product')
-            return HttpResponse('failed')
+            #     return redirect('/admin_add_product')
+            # return HttpResponse('failed')
             # trying to creating new product
     if upload_status == 0:
         form = add_product_form()
