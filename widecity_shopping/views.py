@@ -1234,7 +1234,8 @@ def admin_add_product(request):
     # handles the post request
     if request.method == 'POST':
         global image_1,image_2,image_3,image_4,form
-        if upload_status == 2:
+        if upload_status == 1:
+            upload_status = 2
             form =request.FILES.get('image_1')
             x =float(request.POST.get('x'))
             print(x)
@@ -1256,7 +1257,8 @@ def admin_add_product(request):
             print(product.image_1)
             print('received_image_1')
             return redirect('/admin_add_product')
-        if upload_status == 3:
+        if upload_status == 2:
+            upload_status = 3
             form =request.FILES.get('image_2')
             print(form)        
             x =float(request.POST.get('x'))
@@ -1278,7 +1280,8 @@ def admin_add_product(request):
             image = resized_image.save('media/{}'.format(product.image_2))
             print(product.image_2)
             return redirect('/admin_add_product')
-        if upload_status == 4:
+        if upload_status == 3:
+            upload_status = 4
             form =request.FILES.get('image_3')
             print(form)
             x =float(request.POST.get('x'))
@@ -1300,7 +1303,8 @@ def admin_add_product(request):
             image = resized_image.save('media/{}'.format(product.image_3))
             print(product.image_3)
             return redirect('/admin_add_product')
-        if upload_status == 0:
+        if upload_status == 4:
+            upload_status = 0
             form =request.FILES.get('image_4')
             print(form)        
             x =float(request.POST.get('x'))
@@ -1321,10 +1325,10 @@ def admin_add_product(request):
             resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
             image = resized_image.save('media/{}'.format(product.image_4))
             print(product.image_4)
-            upload_status == 0
             return redirect(admin_thankyou_for_adding_product)
             # return redirect('/admin_add_product')
-        if upload_status == 1:
+        if upload_status == 0:
+            upload_status = 1
             # checking whether all the input fields are filled,not empty and are filled with proper inputs
             # getting datas from the specific fields from the frontend
             form = add_product_form(request.POST, request.FILES)
@@ -1342,25 +1346,20 @@ def admin_add_product(request):
             return HttpResponse('failed')
             # trying to creating new product
     if upload_status == 0:
-        upload_status = 1
         form = add_product_form()
         form_categories = Category.objects.all()
         return render(request, 'admin_add_product.html', {'form': form, 'form_categories': form_categories, 'admin': this_admin})
     elif upload_status == 1:
-        upload_status = 2
         form = add_product_form()
         return render(request, 'upload_image.html',{'index':1,'form': form})   
     elif upload_status == 2:
-        upload_status = 3
         form = add_product_form()
         return render(request, 'upload_image.html',{'index':2,'form': form})   
     elif upload_status == 3:
-        upload_status = 4
         form = add_product_form()
         return render(request, 'upload_image.html',{'index':3,'form': form})   
     elif upload_status == 4:
         form = add_product_form()
-        upload_status = 0
         return render(request, 'upload_image.html',{'index':4,'form': form})
         
 @never_cache
