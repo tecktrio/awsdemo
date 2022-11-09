@@ -859,7 +859,7 @@
         discount = parseInt(orginal_price.innerText) * (parseInt(offer.innerText) / 100 )
         // console.log(discount)
 
-        total_price.innerHTML = parseInt(orginal_price.innerText) - discount
+        total_price.innerHTML =parseInt( parseInt(orginal_price.innerText) - discount)
 
     
         

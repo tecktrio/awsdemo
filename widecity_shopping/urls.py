@@ -85,6 +85,8 @@ urlpatterns = [
 
     # test
     path('test', views.test),
+    # path('admin_collect_new_product_images', views.admin_collect_new_product_images),
+    # path('test', views.PhotoView.as_view(), name='photos'),
     path('accounts/', include('allauth.urls')),
 
 

@@ -83,6 +83,7 @@
         style="border:2px solid rgb(224, 212, 212);padding:50px;background-color: rgb(24, 13, 35);border-radius: 10px;color: rgb(0, 0, 0);box-shadow: 0px 20px 20px;">
         <h3 style="color: white;margin: 0px;">sign up</h3>
            <p style="margin: 0px;">create your widecity account</p>
+           <p style="color:red">{{message}}</p>
             <form action="/user_sign_up" style="margin-top: 10px;" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div style="display: flex;justify-content: center;">
@@ -134,9 +135,9 @@
                 user_contact_number_err.innerHTML = ''
                 return false
             }            
-            else if (user_email == '') {
+            else if (user_email == '' || /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(user_email) == false ) {
                 console.log('email Cannot be empty');
-                user_email_err.innerHTML = 'email Cannot be empty'
+                user_email_err.innerHTML = 'email Cannot be empty<br>Invalid Email Id'
                 user_full_name_err.innerHTML = ''
                 user_password_err.innerHTML = ''
                 user_contact_number_err.innerHTML = ''
@@ -150,9 +151,9 @@
                 user_contact_number_err.innerHTML = ''
                 return false
             }
-            else if (user_contact_number == '') {
+            else if (user_contact_number == '' || user_contact_number.length != 10) {
                 console.log('Contact number Cannot be empty');
-                user_contact_number_err.innerHTML = 'Contact number Cannot be empty'
+                user_contact_number_err.innerHTML = 'Contact number Cannot be empty!<br>It must be 10 numbers!'
                 user_email_err.innerHTML = ''
                 user_password_err.innerHTML = ''
                 user_full_name_err.innerHTML = ''

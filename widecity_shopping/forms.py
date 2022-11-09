@@ -1,19 +1,30 @@
 
 from dataclasses import field
+from PIL import Image
+from django import forms
+from django.core.files import File
 from tkinter import Widget
 from tkinter.tix import Select
 from django import forms
 from django.forms import NumberInput,Textarea,TextInput
-
+from numpy import product
 from widecity_shopping.models import Banners, Category, Products, Subcategory
+
+
 
 class DateInput(forms.DateInput):
     input_type = 'date'
     
 class add_product_form(forms.ModelForm):
+
+    # x = forms.FloatField(widget=forms.HiddenInput())
+    # y = forms.FloatField(widget=forms.HiddenInput())
+    # width = forms.FloatField(widget=forms.HiddenInput())
+    # height = forms.FloatField(widget=forms.HiddenInput())
+    
     class Meta:
         model = Products
-        fields = [
+        fields = (
                     'name', 
                     'description',
                     'specification',
@@ -23,11 +34,15 @@ class add_product_form(forms.ModelForm):
                     'manufacturing_date',
                     'price',
                     'category', 
-                    'image_1', 
-                    'image_2',
-                    'image_3',
-                    'image_4',
-                ]
+                    # 'image_1', 
+                    # 'image_2',
+                    # 'image_3',
+                    # 'image_4',
+                    # 'x',
+                    # 'y',
+                    # 'width',
+                    # 'height',
+        )
         widgets = {
             'manufacturing_date':DateInput(),
             'name':TextInput(attrs={'style':'width:40%;border:1px solid grey;border-radius:10px;padding:1%;font-weight:bold;','onmouseover':'(this.placeholder = "Enter the Product Name")','onmouseout':'(this.placeholder = "")'}),
@@ -37,15 +52,20 @@ class add_product_form(forms.ModelForm):
             'price':NumberInput(attrs={'style':'width:40%;border:2px solid grey;border-radius:10px;;padding:10px;font-weight:bold;','min':1,'max':10000,'onmouseover':'(this.placeholder = "Enter the price of the product")','onmouseout':'(this.placeholder = "")'}),
         }
 
-class add_product_images_form(forms.ModelForm):
-    class Meta:
-        model = Products
-        fields = [ 
-                    'image_1', 
-                    'image_2',
-                    'image_3',
-                    'image_4',
-                ]
+        # def save(self):
+        #     photo = super(add_product_form, self).save()
+
+        #     x = self.cleaned_data.get('x')
+        #     y = self.cleaned_data.get('y')
+        #     w = self.cleaned_data.get('width')
+        #     h = self.cleaned_data.get('height')
+
+        #     image = Image.open(photo.file)
+        #     cropped_image = image.crop((x, y, w+x, h+y))
+        #     resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+        #     resized_image.save(photo.file.path)
+
+        #     return photo
 
 
 class edit_banner(forms.ModelForm):
@@ -66,13 +86,30 @@ class add_category(forms.ModelForm):
         fields = ['name','image']
 
 
+#############################################################33
 
-# uiyuiyuiyghug
 
-from django import forms
-from .models import Image
+class upload_product_image(forms.ModelForm):
+    x = forms.FloatField(widget=forms.HiddenInput())
+    y = forms.FloatField(widget=forms.HiddenInput())
+    width = forms.FloatField(widget=forms.HiddenInput())
+    height = forms.FloatField(widget=forms.HiddenInput())
 
-class ImageForm(forms.ModelForm):
     class Meta:
-        model = Image
-        fields = ('file',)
+        model = Products
+        fields = ('image_1', 'x', 'y', 'width', 'height', )
+
+    def save(self):
+        photo = super(upload_product_image, self).save()
+
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
+
+        image = Image.open(photo.file)
+        cropped_image = image.crop((x, y, w+x, h+y))
+        resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+        resized_image.save(photo.file.path)
+
+        return photo

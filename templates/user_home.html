@@ -6,12 +6,21 @@
     <style>
         .cat {
             margin-top: 10px;
+            width: 10%;
+            border: 1px solid rgb(176, 176, 176);
+            padding: 5px;
+            color: rgb(169, 165, 165);
+            border-radius: 10px;
+           
+
         }
 
         .cat:hover {
             size: 30%;
-            background-color: rgb(216, 207, 207);
+            background-color: rgb(255, 255, 255);
             border-radius: 10px;
+            box-shadow: 0px 10px 10px 10px;
+
         }
 
         .orginal_price {
@@ -23,6 +32,9 @@
             font-weight: bold;
             font-size: 20px;
         }
+        .image_p{
+            border-radius: 15px;
+        }
     </style>
 </head>
 
@@ -31,18 +43,18 @@
 
 
         <main class="main">
-            <div class="intro-slider-container">
+            <div class="intro-slider-container" style="height: 100%;padding: 0px;margin:20px;border-radius: 20px;border: 2px solid rgb(255, 255, 255);">
                 <div class="owl-carousel owl-simple owl-light owl-nav-inside" data-toggle="owl"
-                    data-owl-options='{"nav": false}'>
+                    data-owl-options='{"nav": true}' style="height: 100%;" >
 
-                    <div class="intro-slide" style="background-image: url('/media/{{banner1.image}}');">
+                    <div class="intro-slide" style="background-image: url('/media/{{banner1.image}}');height: 30vw;border-radius: 20px;">
                         <div class="container intro-content">
                             <h3 class="intro-subtitle">{{banner1.heading}}</h3><!-- End .h3 intro-subtitle -->
                             <h1 class="intro-title">{{banner1.description}}</h1><!-- End .intro-title -->
 
                         </div><!-- End .container intro-content -->
                     </div><!-- End .intro-slide -->
-                    <div class="intro-slide" style="background-image: url('/media/{{banner2.image}}');">
+                    <div class="intro-slide" style="background-image: url('/media/{{banner2.image}}');height: 30vw;border-radius: 20px;">
                         <div class="container intro-content">
                             <h3 class="intro-subtitle">{{banner2.heading}}</h3><!-- End .h3 intro-subtitle -->
                             <h1 class="intro-title">{{banner2.description}}
@@ -51,7 +63,7 @@
                         </div><!-- End .container intro-content -->
                     </div><!-- End .intro-slide -->
 
-                    <div class="intro-slide" style="background-image: url('/media/{{banner3.image}}');">
+                    <div class="intro-slide" style="background-image: url('/media/{{banner3.image}}');height:30vw;border-radius: 20px;">
                         <div class="container intro-content">
                             <h3 class="intro-subtitle">{{banner3.heading}}</h3><!-- End .h3 intro-subtitle -->
                             <h1 class="intro-title">{{banner3.description}}
@@ -64,22 +76,23 @@
 
                 <span class="slider-loader text-white"></span><!-- End .slider-loader -->
             </div><!-- End .intro-slider-container -->
-
-            <div style="display:flex;flex-direction: row;display: flex;justify-content: space-evenly;">
+<div style="text-align: center;"></div>
+<hr>
+            <div style="display:flex;flex-direction: row;display: flex;justify-content: space-evenly;margin-top:2%;" class="container-fluid">
                 {% for category in categories %}
-                <div class="cat">
+                <div class="cat col-lg-1">
                     <a href="/user_category_view/{{category.name}}" class="brand"
                         style="display: flex;flex-direction: column;">
-                        <img src="/media/{{category.image}}" style="width: 100px;height:100px;margin: 20px;"
-                            alt="brand">
-                        <p>{{category.name}}</p>
+                        <img src="/media/{{category.image}}" 
+                            alt="brand" >
+                        <!-- <p>{{category.name}}</p>
                         <span style="color: rgb(108, 102, 102);font-weight: bold;">{{category.offer_percentage}}%
-                            off</span>
+                            off</span> -->
                     </a>
                 </div><!-- End .owl-carousel -->
                 {% endfor %}
             </div>
-
+<hr>
             <div class="mb-3 mb-lg-5"></div><!-- End .mb-3 mb-lg-5 -->
 
             <div class="banner-group">
@@ -94,8 +107,8 @@
 
                                 <div class="banner-content banner-content-top">
                                     <h4 class="banner-subtitle">Clearence</h4><!-- End .banner-subtitle -->
-                                    <h3 class="banner-title">Electronic items</h3><!-- End .banner-title -->
-                                    <div class="banner-text">from Rs 19.99</div><!-- End .banner-text -->
+                                    <h3 class="banner-title">Led Lights</h3><!-- End .banner-title -->
+                                    <div class="banner-text">from Rs 100</div><!-- End .banner-text -->
                                     <a href="#" class="btn btn-outline-gray banner-link">Shop Now<i
                                             class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .banner-content -->
@@ -111,9 +124,9 @@
 
                                 <div class="banner-content banner-content-bottom">
                                     <h4 class="banner-subtitle text-grey">On Sale</h4><!-- End .banner-subtitle -->
-                                    <h3 class="banner-title text-white">Amazing <br>Robots</h3>
+                                    <h3 class="banner-title text-white">Amazing <br>Microcontrollers</h3>
                                     <!-- End .banner-title -->
-                                    <div class="banner-text text-white">from $39.99</div><!-- End .banner-text -->
+                                    <div class="banner-text text-white">from Rs 500</div><!-- End .banner-text -->
                                     <a href="#" class="btn btn-outline-white banner-link">Discover Now<i
                                             class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .banner-content -->
@@ -129,7 +142,7 @@
 
                                 <div class="banner-content banner-content-top">
                                     <h4 class="banner-subtitle text-grey">New Arrivals</h4><!-- End .banner-subtitle -->
-                                    <h3 class="banner-title text-white">Beatiful <br>lights</h3>
+                                    <h3 class="banner-title text-white">Advanced <br>Modules</h3>
                                     <!-- End .banner-title -->
                                     <a href="#" class="btn btn-outline-white banner-link">Discover Now<i
                                             class="icon-long-arrow-right"></i></a>
@@ -211,16 +224,16 @@
 
                             <!-- Featured product tab start -->
                             {% for product in trusted_products %}
-                            <div class="product product-11 text-center">
+                            <div class="product product-11 text-center col-lg-10">
                                 <figure class="product-media">
                                     <a href="/user_product_detail/{{product.id}}">
-                                        <img src="/media/{{product.image_1}}" alt="Product image" class="product-image">
+                                        <img src="/media/{{product.image_1}}" alt="Product image" class="product-image image_p" >
                                         <img src="/media/{{product.image_2}}" alt="Product image"
                                             class="product-image-hover">
                                     </a>
                                     
                                 </figure><!-- End .product-media -->
-                                <div class="product-body">
+                                <div class="product-body" style="margin: 0px;padding:0px">
                                     <h3 class="product-title"><a href="product.html">{{product.name}}</a></h3>
                                     <!-- End .product-title -->
 
@@ -278,20 +291,20 @@
 
                             <!-- on sale products start -->
                             {% for product in best_offer_products %}
-                            {% if product.offer_percentage >= 10 %}
-                            <div class="product product-11 text-center">
+                            {% if product.offer_percentage > 20 %}
+                            <div class="product product-11 text-center col-lg-10">
                                 <figure class="product-media">
                                     <a href="/user_product_detail/{{product.id}}">
-                                        <img src="/media/{{product.image_1}}" alt="Product image" class="product-image">
+                                        <img src="/media/{{product.image_1}}" alt="Product image" class="product-image image_p">
                                         <img src="/media/{{product.image_2}}" alt="Product image"
-                                            class="product-image-hover">
+                                            class="product-image-hover image_p">
                                     </a>
-                                    <div class="product-action-vertical">
+                                    <!-- <div class="product-action-vertical">
                                         <a href="#" class="btn-product-icon btn-wishlist"><span>add to
                                                 wishlist</span></a>
-                                    </div><!-- End .product-action-vertical -->
+                                    </div>End .product-action-vertical -->
                                 </figure><!-- End .product-media -->
-                                <div class="product-body">
+                                <div class="product-body" style="padding: 0px;margin: 0px;">
                                     <h3 class="product-title"><a href="product.html">{{product.name}}</a></h3>
                                     <!-- End .product-title -->
 
@@ -309,7 +322,7 @@
                                 </div>
                             </div><!-- End .product -->
                             <!-- end on sale -->
-                            {% endif %}
+                         {% endif %}
                             {% endfor %}
                         </div><!-- End .owl-carousel -->
                     </div><!-- .End .tab-pane -->
@@ -568,10 +581,10 @@
                                 <h4 class="widget-title">My Account</h4><!-- End .widget-title -->
 
                                 <ul class="widget-list">
-                                    <li><a href="#">Sign In</a></li>
-                                    <li><a href="cart.html">View Cart</a></li>
-                                    <li><a href="#">My Wishlist</a></li>
-                                    <li><a href="#">Track My Order</a></li>
+                                    <!-- <li><a href="#">Sign In</a></li> -->
+                                    <li><a href="/user_view_cart">View Cart</a></li>
+                                    <!-- <li><a href="#">My Wishlist</a></li> -->
+                                    <li><a href="/user_account">Track My Order</a></li>
                                     <li><a href="#">Help</a></li>
                                 </ul><!-- End .widget-list -->
                             </div><!-- End .widget -->
@@ -696,7 +709,7 @@
                 o_price = orginal_price[price].innerText
                 // console.log(o_price)
                 discount = parseInt(o_price) * (parseInt(offer[price].innerText) / 100)
-                total_price[price].innerHTML = o_price - discount
+                total_price[price].innerHTML = parseInt(o_price - discount)
 
             }
 

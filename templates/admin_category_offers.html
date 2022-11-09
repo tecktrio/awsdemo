@@ -79,12 +79,12 @@
         </div>
       </div>
     </section>
-    <form action="/admin_sales_report" method="POST">
+    <form action="/admin_category_offers" method="POST">
       {% csrf_token %}
        <nav aria-label="Page navigation example">
       <ul class="pagination" >
-        <li class="page-item disabled">
-          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        <li class="page-item " id="disable_p">
+          <button class="page-link" type="submit" name="page_number" value="{{current_page|add:'-1'}}" onmouseover="if(this.value == '0'){document.getElementById('disable_p').classList.add('disabled')}">Previous</button>
         </li>
         
         {% for i in available_pages %}
@@ -92,8 +92,8 @@
             <input type="text" name="duration" value="{{duration}}"  style="display: none;">
     <input value ='{{forloop.counter}}' class="page-link" type="submit" name="page_number"></li>
         {% endfor %}
-        <li class="page-item">
-          <a class="page-link" href="#">Next</a>
+        <li class="page-item" id="disable_n">
+          <button class="page-link" type="submit" name="page_number" value="{{current_page|add:'1'}}" onmouseover="if(this.value > '{{available_pages|length}}'){document.getElementById('disable_n').classList.add('disabled')}">Next</button>
         </li>
       </ul>
     </nav><!-- End Left/Start Pagination -->

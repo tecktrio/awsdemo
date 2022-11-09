@@ -76,11 +76,11 @@ class Products(models.Model):
     
     name = models.CharField(max_length = 30 )
     description = models.CharField(max_length = 150 )
-    image_1 = models.ImageField(upload_to='image_1_of_products')
-    image_2 = models.ImageField(upload_to ='image_2_of_products')
-    image_3 = models.ImageField(upload_to ='image_3_of_products')
-    image_4 = models.ImageField(upload_to ='image_4_of_products')
-    manufacturing_date = models.CharField(max_length  = 100)
+    image_1 = models.ImageField(upload_to='image_1_of_products/')
+    image_2 = models.ImageField(upload_to ='image_2_of_products/')
+    image_3 = models.ImageField(upload_to ='image_3_of_products/')
+    image_4 = models.ImageField(upload_to ='image_4_of_products/')
+    manufacturing_date = models.CharField(max_length  = 100,default=current_date)
     price = models.IntegerField(default = 0)
     # mrp = models.IntegerField(default = 0)
     # category = models.ForeignKey(Category,on_delete = models.CASCADE)
@@ -124,12 +124,6 @@ class Cart(models.Model):
     total_price = models.CharField(default=0,max_length = 300)
     
     # lets crop
-class Image(models.Model):
-    file = models.ImageField(upload_to='cropped_images/')
-    uploaded = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.pk)
 
 
 class Coupon(models.Model):
@@ -155,3 +149,6 @@ class Wallet_history(models.Model):
     reason = models.CharField(max_length = 500)
     Debit_Credit = models.CharField(max_length = 500,default='credited')#it can be debited or credited
     
+
+########################################################################33
+

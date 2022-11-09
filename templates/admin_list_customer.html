@@ -12,8 +12,6 @@
       text-transform: uppercase;
       font-size: 1rem;
     }
-
-
   </style>
 </head>
 <main id="main" class="main">
@@ -46,19 +44,19 @@
                     <div class="form-check form-switch">
                       {% if user.active_status == 'active' %}
                       <div style="display:flex ;justify-content: space-between;">
-                          <p>UnBlocked</p>
-                          <input class="form-check-input" type="checkbox" id="active{{user.email}}"
-                          onchange="update_status('{{user.email}}')" >
+                        <p>UnBlocked</p>
+                        <input class="form-check-input" type="checkbox" id="active{{user.email}}"
+                          onchange="update_status('{{user.email}}')">
                       </div>
-                     
+
                       {% else %}
-                      <div style="display:flex ;justify-content: space-between;">      
-                          <p>Blocked</p>
-                          <input class="form-check-input" type="checkbox" id="active{{user.email}}"
+                      <div style="display:flex ;justify-content: space-between;">
+                        <p>Blocked</p>
+                        <input class="form-check-input" type="checkbox" id="active{{user.email}}"
                           onchange="update_status('{{user.email}}')" checked>
 
                       </div>
-               
+
                       {% endif %}
                     </div>
                   </td>
@@ -71,24 +69,25 @@
       </div>
     </div>
   </section>
-  <form action="/admin_sales_report" method="POST">
+  <form action="/admin_list_customer" method="POST">
     {% csrf_token %}
-     <nav aria-label="Page navigation example">
-    <ul class="pagination" >
-      <li class="page-item disabled">
-        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-      </li>
-      
-      {% for i in available_pages %}
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item " id="disable_p">
+          <button class="page-link" type="submit" name="page_number" value="{{current_page|add:'-1'}}" onmouseover="if(this.value == '0'){document.getElementById('disable_p').classList.add('disabled')}">Previous</button>
+        </li>
+
+        {% for i in available_pages %}
         <li class="page-item">
-          <input type="text" name="duration" value="{{duration}}"  style="display: none;">
-  <input value ='{{forloop.counter}}' class="page-link" type="submit" name="page_number"></li>
-      {% endfor %}
-      <li class="page-item">
-        <a class="page-link" href="#">Next</a>
-      </li>
-    </ul>
-  </nav><!-- End Left/Start Pagination -->
+          <input type="text" name="duration" value="{{duration}}" style="display: none;">
+          <input value='{{forloop.counter}}' class="page-link" type="submit" name="page_number">
+        </li>
+        {% endfor %}
+        <li class="page-item" id="disable_n">
+          <button class="page-link" type="submit" name="page_number" value="{{current_page|add:'1'}}" onmouseover="if(this.value > '{{available_pages|length}}'){document.getElementById('disable_n').classList.add('disabled')}">Next</button>
+        </li>
+      </ul>
+    </nav><!-- End Left/Start Pagination -->
   </form>
 </main><!-- End #main -->
 
@@ -96,60 +95,60 @@
 <script>
   $(document).ready(function () {
     console.log('your document is ready');
-    
+
   })
   function update_status(email) {
 
-        Swal.fire({
-        title: 'You are trying to change the status of your customer?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'I know',
-        cancelButtonText: 'Go back',
-        }).then((result) => {
-            status = document.getElementById('active' + email).checked
-            console.log(status)
-        /* Read more about isConfirmed, isDenied below */
-        console.log(result)
-          if(result.value == true){
-              change()
-          }else{
+    Swal.fire({
+      title: 'You are trying to change the status of your customer?',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'I know',
+      cancelButtonText: 'Go back',
+    }).then((result) => {
+      status = document.getElementById('active' + email).checked
+      console.log(status)
+      /* Read more about isConfirmed, isDenied below */
+      console.log(result)
+      if (result.value == true) {
+        change()
+      } else {
 
-            if(status == 'true'){
-              document.getElementById('active' + email).checked = false
-            }
-            else if(status == 'false'){
-              document.getElementById('active' + email).checked = true
-            }
-          }
-  
-        })
-        
-
-        function change(){
-            status = document.getElementById('active' + email).checked
-            $.ajaxSetup({
-            data: { csrfmiddlewaretoken: '{{csrf_token}}' },
-            });
-            $.ajax({
-            url: '/admin_update_user_status',
-            data: { 'status': status, 'email': email },
-            method: 'POST',
-            success: function (response) {
-            if (response['status'] == 'block') {
-            console.log('user blocked successfully')
-            }
-            else if (response['status'] == 'active') {
-            console.log('user is now active')
-            }
-            window.location.reload()
-            },
-            error: function () {
-            console.log('ajax is not working')
-            }
-            });
+        if (status == 'true') {
+          document.getElementById('active' + email).checked = false
         }
-       
+        else if (status == 'false') {
+          document.getElementById('active' + email).checked = true
+        }
+      }
+
+    })
+
+
+    function change() {
+      status = document.getElementById('active' + email).checked
+      $.ajaxSetup({
+        data: { csrfmiddlewaretoken: '{{csrf_token}}' },
+      });
+      $.ajax({
+        url: '/admin_update_user_status',
+        data: { 'status': status, 'email': email },
+        method: 'POST',
+        success: function (response) {
+          if (response['status'] == 'block') {
+            console.log('user blocked successfully')
+          }
+          else if (response['status'] == 'active') {
+            console.log('user is now active')
+          }
+          window.location.reload()
+        },
+        error: function () {
+          console.log('ajax is not working')
+        }
+      });
+    }
+
   };
 </script>
 

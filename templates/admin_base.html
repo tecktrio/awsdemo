@@ -56,6 +56,13 @@
       color: rgb(0, 0, 0)
     }
   </style>
+  	<link  href="{% static 'admin_assets/css/cropper.min.css' %}" rel="stylesheet">
+    <style type="text/css" media="screen">
+      /* Limit image width to avoid overflow the container */
+      #id_img_1 {
+        max-width: 100%; /* This rule is very important, please do not ignore this! */
+      }
+    </style>
 </head>
 <!--beginning of the body element-->
 <!-- background-image: url(media/4k_images/space.jpg) -->
@@ -86,7 +93,7 @@
               <!--      this is where you have to give the image source of admin profile    -->
               
                
-                <img src="/media/{{admin.profile_image}}" alt="Profile" style="height: 50%;width: 50%;border-radius: 50px;">
+                <img src="/media/{{admin.profile_image}}" alt="Profile" style="height:50px;width: 50px;border-radius:50%;">
               
               <!--     this is where you should give the link to the admin name     -->
               <span class="d-none d-md-block dropdown-toggle ps-2">{{admin.full_name}}</span>
@@ -325,6 +332,8 @@
 
     <!-- Template Main JS File -->
     <script src="{% static 'admin_assets/js/main.js'%}"></script>
+    <script src="{% static 'admin_assets/js/cropperjs/cropper.min.js' %}"></script>
+
   </div>
 </body>
 

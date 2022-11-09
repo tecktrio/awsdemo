@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'widecity_shopping',
     'django.contrib.admin',
     'django.contrib.auth',
+    'cropperjs',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
