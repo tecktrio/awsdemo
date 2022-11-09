@@ -1690,30 +1690,43 @@ def admin_edit_Product(request):
         product.specification = request.POST.get('product_specification')
         product.stock_available = request.POST.get('product_stock_available')
         product.available_status = request.POST.get('product_status')
+
         if request.FILES.get('image_1') == None:
             product.image_1 = product.image_1
             print('product image 1 not found')
         else:
-            os.remove(product.image_1.path)
+            try:
+                os.remove(product.image_1.path)
+            except:
+                pass
             product.image_1 = request.FILES.get('image_1')
 
         if request.FILES.get('image_2') == None:
             product.image_2 = product.image_2
             print('product image 2 not found')
         else:
-            os.remove(product.image_2.path)
+            try:
+                os.remove(product.image_2.path)
+            except:
+                pass
             product.image_2 = request.FILES.get('image_2')
         if request.FILES.get('image_3') == None:
             product.image_3 = product.image_3
             print('product image 3 not found')
         else:
-            os.remove(product.image_3.path)
+            try:
+                os.remove(product.image_3.path)
+            except:
+                pass
             product.image_3 = request.FILES.get('image_3')
         if request.FILES.get('image_4') == None:
             product.image_4 = product.image_4
             print('product image 4 not found')
         else:
-            os.remove(product.image_4.path)
+            try:
+                os.remove(product.image_4.path)
+            except:
+                pass
             product.image_4 = request.FILES.get('image_4')
         product.save()
         return render(request, 'admin_edit_product_success.html')
