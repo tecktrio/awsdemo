@@ -1,5 +1,7 @@
 # here we write the views file
 # importing the neccessary packages and modules
+
+# create a guest user first to work properly, it should have the id as 1
 import csv
 import os
 from unicodedata import name
@@ -49,6 +51,7 @@ def root(request):
 
 @never_cache
 def user_home(request):
+    global cart_count
     '''Render and control the datas in the user home page'''
     user = ''
     try:
@@ -58,6 +61,8 @@ def user_home(request):
             cart_count = Cart.objects.filter(user=user).count()
         else:
             user = 'guest'
+            guest_id = request.COOKIES['sessionid']
+            cart_count = Cart.objects.filter(guest_id=guest_id).count()
     except:
         pass
     try:
@@ -103,15 +108,17 @@ def user_product_detail(request, product_id):
     user = ''
     if 'user' in request.session:
         user = request.session['user']
+        this_user = Users.objects.get(email=user)
     else:
         user = 'guest'
+        this_user = 'guest'
     product = Products.objects.get(id=product_id)
     category = Products.objects.filter(category=product.category)
     categories = Category.objects.all()
     context = {
         'product': product, 
         'category': category,
-        'user':user,
+        'user':this_user,
         'categories':categories,
         'cart_count':cart_count
         }
@@ -170,6 +177,12 @@ def user_invoice(request):
 @never_cache
 def user_category_view(request, name):
     '''Render and Control the user category view'''
+    if 'user' in request.session:
+        user = request.session['user']
+        this_user = Users.objects.get(email=user)
+    else:
+        user = 'guest'
+        this_user = 'guest'
     global cart_count
     price_filter_min = 0
     price_filter_max = 10000
@@ -212,6 +225,7 @@ def user_category_view(request, name):
             'min':price_filter_min,
             'max':price_filter_max,
             'cart_count':cart_count,
+            'user':this_user,
         }
     return render(request,'user_category_view.html',context)
 # end
@@ -219,31 +233,79 @@ def user_category_view(request, name):
 
 @never_cache
 def user_add_to_cart(request):
+
     '''working while the user cliick add to cart'''
     print('trying to add product to the cart')
     response = 'failed'
     if request.method == 'POST':
+        product_id = int(request.POST.get('product_id'))
+        product = Products.objects.get(id=product_id)
+        product_offer = product.offer_percentage
+        discount = int(product.price) * (int(product_offer) / 100)
+        total_price = product.price - discount
         if 'user' in request.session:
             user = request.session['user']
-            product_id = int(request.POST.get('product_id'))
             user = Users.objects.get(email=user)
-            product = Products.objects.get(id=product_id)
-            product_offer = product.offer_percentage
-            discount = int(product.price) * (int(product_offer) / 100)
-            total_price = product.price - discount
+            cart_products = Cart.objects.filter(user = user)
             print('offer applied ', total_price)
-            new_cart_product = Cart.objects.create(
-                product_id=product_id,
-                user_id=user.id,
-                quantity=1,
-                total_price=int(total_price),
-            )
-            new_cart_product.save()
-            response = 'product_added'
-            print(response)
+
+            status = 0
+            for product in cart_products:
+                print(product_id,product.product.id)
+                if str(product.product.id) == str(product_id):
+                    print('product is updating')
+                    product.quantity += 1
+                    product.save()
+                    status = 1
+                    response = 'product_added'
+                    break
+                
+                   
+            if status == 0:
+                print('new to cart')
+                new_cart_product = Cart.objects.create(
+                        product_id=product_id,
+                        user_id=user.id,
+                        quantity=1,
+                        total_price=int(total_price),
+                        )
+                new_cart_product.save()
+                response = 'product_added'
+                
+            return JsonResponse({'response': response})
+   
         else:
-            response = 'user_not_found'
-            print(response)
+            guest_id = request.COOKIES['sessionid']
+            print('user is not found. trying to get a guest user account...')
+            print('your guest user acoount id is ',guest_id)
+            cart_products = Cart.objects.filter(guest_id = guest_id)
+
+            status = 0
+            for product in cart_products:
+                print(product_id,product.product.id)
+                if str(product.product.id) == str(product_id):
+                    print('product is updating')
+                    product.quantity += 1
+                    product.save()
+                    status = 1
+                    response = 'product_added'
+                    break
+                
+                   
+            if status == 0:
+                print('new to cart')
+                new_cart_product = Cart.objects.create(
+                        product_id=product_id,
+                        guest_id=guest_id,
+                        user_id = 1,
+                        quantity=1,
+                        total_price=int(total_price),
+                        )
+                new_cart_product.save()
+                response = 'product_added'
+                
+            return JsonResponse({'response': response})
+            
     return JsonResponse({'response': response})
 # end
 #############################################################################################################################
@@ -251,20 +313,22 @@ def user_add_to_cart(request):
 @never_cache
 def user_view_cart(request):
     '''Render view cart in user side'''
+    global cart_count
     sub_total = 0
     # trying to add the order to the cart
-    if 'user' in request.session:
-        user = request.session['user']
-    else:
-        return redirect('/user_sign_in')
     try:
-        user = Users.objects.get(email=user)
+        if 'user' in request.session:
+            user = request.session['user']
+            user = Users.objects.get(email=user)
+            products = Cart.objects.filter(user=user.id)
+        else:
+            user = 'guest'
+            guest_id = request.COOKIES['sessionid']
+            products = Cart.objects.filter(guest_id=guest_id)
     except:
         user = ''
-    try:
-        products = Cart.objects.filter(user=user.id)
-    except:
         products = ''
+
     if len(products) == 0:
         return render(request, 'user_cart_empty.html')
     product_offer = 0
@@ -281,9 +345,12 @@ def user_view_cart(request):
         'products': products, 
         'sub_total': sub_total, 
         'special_offer': special_offer, 
-        'delivery_charge': delivery_charge
+        'delivery_charge': delivery_charge,
+        'cart_count':cart_count
         }
-    return render(request, 'user_cart_view.html',context)
+    response = render(request, 'user_cart_view.html',context)
+   
+    return response
 # end
 #############################################################################################################################
 
@@ -354,10 +421,11 @@ def search_engine(request):
             print('found in product')
             search_result = Products.objects.get(id=product.id)
             result.append(search_result)
-    return render(request, 'user_search_results.html',
-                  {
-                      'category_products': result
-                  })
+    context = {
+                'search_results': result,
+                'cart_count':cart_count,
+            }
+    return render(request, 'user_search_results.html',context)
 # generation content of user export my orders in csv
 # start
 @never_cache
@@ -392,16 +460,22 @@ def user_export_myorders_in_csv(request):
 @never_cache
 def user_update_cart(request):
     '''this will handle the quartity updations in cart'''
+    user ='guest'
     if 'user' in request.session:
         user = request.session['user']
     else:
-        return redirect('/user_sign_in')
+        guest_id = request.COOKIES['sessionid']
+
     if request.method == 'POST':
         quantity = request.POST.get('quantity')
         cart_id = request.POST.get('cart_id')
         task = request.POST.get('task')
         print(task)
-        user = Users.objects.get(email=user)
+        try:
+            user = Users.objects.get(email=user)
+        except:
+            user = guest_id
+
         product = Cart.objects.get(id=cart_id)
         stock = Products.objects.get(id=product.product.id)
         discount = int(stock.price) * (int(stock.offer_percentage)/100)
@@ -433,7 +507,11 @@ def user_update_cart(request):
         stock.save()
         print('stock balance ', stock.stock_available)
         product.save()
-        all_cart_products = Cart.objects.filter(user=user.id)
+        try:
+            all_cart_products = Cart.objects.filter(user=user.id)
+        except:
+            all_cart_products = Cart.objects.filter(guest_id=guest_id)
+
         sub_total = 0
         for product in all_cart_products:
             sub_total = int(sub_total) + int(product.total_price)
@@ -472,6 +550,7 @@ def user_check_cart_or_shop(request):
 @never_cache
 def user_checkout(request):
     '''handles the checkout page'''
+    global cart_count
     if 'user' in request.session:
         user = request.session['user']
     else:
@@ -479,14 +558,16 @@ def user_checkout(request):
     sub_total = request.session['sub_total']
     address = Address.objects.filter(email=user)
     user = Users.objects.get(email=user)
-    return render(request, 'user_checkout.html',
-                  {
-                      'sub_total': sub_total,
-                      'address': address,
-                      'user': user,
-                      'default_address_id': 1,
-                      'total_razorpay':sub_total*100,
-                  })
+    context = {
+            'sub_total': sub_total,
+            'address': address,
+            'user': user,
+            'default_address_id': 1,
+            'total_razorpay':sub_total*100,
+            'cart_count':cart_count
+        }
+    return render(request, 'user_checkout.html',context)
+                  
 # end
 #############################################################################################################################
 
@@ -741,9 +822,27 @@ def user_edit_address(request, address_id):
 @never_cache
 def user_sign_in(request):
     '''handle the sign in request from the user'''
+    
+    def configuring_cart(email):
+        print('checking the cart of guest user on this system...')
+        guest_id = request.COOKIES['sessionid']
+        user = Users.objects.get(email = email)
+        # cart_items = Cart.objects.filter(user=user)
+        guest_cart_items = Cart.objects.filter(guest_id = guest_id)
+        print('copying the cart products to the user cart if any products exists...')
+        count = 0
+        for product in guest_cart_items:
+            product.user = user
+            product.save()
+            count += 1
+            print('copied {} product'.format(count))
+            
+        pass
+
     if 'user' in request.session:
         return redirect(user_home)
     if request.method == 'POST':
+       
         # collecting the data from the ajax request in user_sign_in.html
         user_email = request.POST.get('user_email')
         user_password = request.POST.get('user_password')
@@ -757,6 +856,7 @@ def user_sign_in(request):
                         if user.active_status == 'active':
                             request.session['user'] = user_email
                             user_authentication_status = 'success'
+                            configuring_cart(user_email)
                             break
                         user_authentication_status = 'user_not_active'
                         break
@@ -857,9 +957,11 @@ def add_to_wallet_history(order):
     '''helps to add the amount to the wallet'''
     new_wallet_history = Wallet_history.objects.create(order_id = order)
     new_wallet_history.save()
+
 @never_cache
 def user_account(request):
     '''handle the user account'''
+    global cart_count
     refered_people = ''
     if 'user' in request.session:
         user = request.session['user']
@@ -896,8 +998,14 @@ def user_account(request):
         print(people.refered_user_id)
         user = Users.objects.get(id=(people.refered_user_id))
         peoples.append(user.full_name)
-    return render(
-        request, 'user_account.html', {'user': this_user, 'orders': orders, 'address': address, 'refered_people_details': peoples})
+    context = {
+        'user': this_user, 
+        'orders': orders, 
+        'address': address, 
+        'refered_people_details': peoples,
+        'cart_count':cart_count
+        }
+    return render(request, 'user_account.html', context)
 # end
 @never_cache
 def user_otp_sign_in(request):
@@ -944,6 +1052,7 @@ def user_otp_sign_in(request):
 @never_cache
 def user_wallet(request):
     '''handle the user wallet requests'''
+    global cart_count
     if 'user' in request.session:
         user = request.session['user']
         this_user = Users.objects.get(email=user)
@@ -957,7 +1066,13 @@ def user_wallet(request):
     user = Users.objects.get(email=user)
     wallet_balance = user.wallet_balance
     user_wallet_history  = Wallet_history.objects.filter(user_id = this_user.id)
-    return render(request,'user_wallet.html',{'wallet_balance':wallet_balance,'user_wallet_history':user_wallet_history,'user':this_user})
+    context = {
+        'wallet_balance':wallet_balance,
+        'user_wallet_history':user_wallet_history,
+        'user':this_user,
+        'cart_count':cart_count,
+        }
+    return render(request,'user_wallet.html',context)
 
 @never_cache
 def user_otp_sign_in_validation(request):
@@ -1367,13 +1482,17 @@ def admin_list_orders(request):
 @never_cache
 def admin_order_details(request, order_id):
     admin = ''
+    address = ''
     if 'admin' in request.session:
         admin = request.session['admin']
     else:
         return redirect('/admin_sign_in')
     this_admin = Users.objects.get(email=admin)
     order = Orders.objects.get(id=order_id)
-    address = Address.objects.get(id=order.Address)
+    try:
+        address = Address.objects.get(id=order.Address)
+    except:
+        pass
     if order.status == 'ordered':
         next_status = 'shipped'
     elif order.status == 'shipped':

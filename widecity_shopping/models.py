@@ -36,6 +36,7 @@ class Users(models.Model):
     reference_id = models.CharField(max_length  =100,default = '0000000000')
     wallet_balance = models.IntegerField(default = 0)
 
+
 class Address(models.Model):
     email = models.CharField(max_length = 50 ,default = 'buddy')
     first_name = models.CharField(max_length =100)
@@ -120,6 +121,7 @@ class Cart(models.Model):
 
     product  = models.ForeignKey(Products,on_delete = models.CASCADE)
     user = models.ForeignKey(Users,on_delete = models.CASCADE)
+    guest_id = models.CharField(max_length=100,default='')
     quantity = models.IntegerField(default = 0)
     total_price = models.CharField(default=0,max_length = 300)
     
