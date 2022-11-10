@@ -1392,7 +1392,7 @@ def admin_update_user_status(request):
 @never_cache
 def admin_list_product(request):
     admin = ''
-    ppp = 5
+    ppp = 3
     current_page = ''
     if 'admin' in request.session:
         admin = request.session['admin']
