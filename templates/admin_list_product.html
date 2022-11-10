@@ -71,12 +71,10 @@
                     {% endif %}
                     <td style="display:flex;">
                       <form action="/admin_edit_Product" id="sf" method="GET">
-                      <input onclick=" return swal('edit')" value="edit" class="edit">
-                        
-                      <input  onclick=" return swal('delete')" value="delete" class="delete">
-                     
-                      <input name='product_id'   value="{{product.id}}" style="display: none;">
-                      <input name='action' style="display: none;" type="text" id="action">
+                          <input onclick=" return swal('edit','{{product.id}}')" value="edit" class="edit">
+                          <input  onclick=" return swal('delete','{{product.id}}')" value="delete" class="delete">
+                          <input name='product_id'   value="{{product.id}}" style="display: none;" id="product_id">
+                          <input name='action' style="display: none;" type="text" id="action">
                       </form>
                     </td>
                   </tr>
@@ -124,10 +122,10 @@
     </form>
   </main><!-- End #main -->
   <script>
-    function  swal(task){
+    function  swal(task,product_id){
       var status = false
           Swal.fire({
-              title: 'Are you sure? ',
+              title: `Are you sure?`,
               showDenyButton: true,
               showCancelButton: true,
               confirmButtonText: 'yes',
@@ -137,6 +135,7 @@
               // console.log(result)
               if(result.value == true){
               document.getElementById('action').value = task
+              document.getElementById('product_id').value = product_id
               document.getElementById('sf').submit()
               }
           })

@@ -1408,7 +1408,14 @@ def admin_list_product(request):
     pages = int(products.count()/ppp)
     for i in range(0,pages):
         available_pages.append(i)
-    return render(request, 'admin_list_product.html', {'admin': admin, 'products': page_obj, 'admin': this_admin,'available_pages':available_pages,'current_page':current_page})
+    context =   {
+        'admin': admin, 
+        'products': page_obj, 
+        'admin': this_admin,
+        'available_pages':available_pages,
+        'current_page':current_page
+        }
+    return render(request, 'admin_list_product.html',context)
 
 @never_cache
 def admin_list_category(request):
@@ -1680,7 +1687,7 @@ def admin_edit_Product(request):
     products = Products.objects.all()
     if request.method == 'POST':
         global current_product
-        id = request.POST.get('id')
+        id = request.POST.get('product_id')
         print(id)
         product = Products.objects.get(id=id)
         product.name = request.POST.get('product_name')
@@ -1730,12 +1737,14 @@ def admin_edit_Product(request):
             product.image_4 = request.FILES.get('image_4')
         product.save()
         return render(request, 'admin_edit_product_success.html')
+
     action = request.GET.get('action')
     product_id = request.GET.get('product_id')
     print(action)
     print(product_id)
     product = Products.objects.get(id=product_id)
     categories = Category.objects.all()
+
     if action == 'edit':
         return render(request, 'admin_edit_product.html', {'product': product, 'admin': this_admin,'categories':categories})
     elif action == 'delete':
@@ -1764,7 +1773,10 @@ def admin_edit_category(request, cat_id):
         if image is None:
             category.image = Category.objects.get(id=cat_id).image
         else:
-            os.remove(category.image.path)
+            try:
+                os.remove(category.image.path)
+            except:
+                pass
             category.image = image
         category.name = name
         category.save()
