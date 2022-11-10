@@ -152,5 +152,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-TWILIO_SSID = 'ACd9fe7f948f2b0de94a1502c2998c884e'
-TWILIO_AUTH_TOKEN = 'f070291c1c37de98a98dc9102dd40832'
