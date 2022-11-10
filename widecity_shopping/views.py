@@ -18,6 +18,7 @@ from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from django.shortcuts import redirect, render
 from twilio.rest import Client
+from project_widecity.settings import TWILIO_AUTH_TOKEN, TWILIO_SSID
 from widecity_shopping.forms import add_category, add_product_form, upload_product_image
 from widecity_shopping.models import Banners, Cart, Category, Coupon, Coupon_history, Orders, Products, References, Return_request, Users, Address, Wallet_history
 from django.core.paginator import Paginator
@@ -1023,12 +1024,13 @@ def user_otp_sign_in(request):
             print(user_contact_number)
             user = Users.objects.get(contact_number=user_contact_number)
             print(user.contact_number)
+            request.session['contact_number'] = user.contact_number
             if user is not None:
                 print('found the user')
                 # generate otp and send otp
                 # setting up the variables with the data that we get from the message api ( twilio )
-                account_sid = 'ACd9fe7f948f2b0de94a1502c2998c884e'
-                auth_token = 'd69ec50d7f2dde2e1a298d998c01052f'
+                account_sid = TWILIO_SSID
+                auth_token = TWILIO_AUTH_TOKEN
                 # verifying the client usig the above details
                 print('trying to connect with twilio.......')
                 client = Client(account_sid, auth_token)
@@ -1042,10 +1044,12 @@ def user_otp_sign_in(request):
                 try:
                     message = client.messages \
                         .create(
-                            body='Phantom Menace was clearly the best of the prequel trilogy.',
+                            body='welcome to widecity shopping. please confirm your account using the otp - {}'.format(otp),
                             messaging_service_sid='MG325c8d09bb4a59cb036125616ad3d750',
-                            to='+91{}'.format(9946658045)
+                            to='+91{}'.format(user_contact_number)
                         ) 
+                    print('otp send successfully')
+                    otp_sign_in_user_status = 'success'
                 except:
                     print('sry, failed to send the otp')
                     otp_sign_in_user_status = 'failed_to_send_otp'
@@ -1094,6 +1098,8 @@ def user_otp_sign_in_validation(request):
         user_authentication_status = 'wrong_otp'
         if str(user_otp) == str(otp):
             user_authentication_status = 'otp_verified'
+            user = Users.objects.get(contact_number = str(request.session['contact_number']))
+            request.session['user'] = user.email
         return JsonResponse({'user_authentication_status': user_authentication_status})
     return render(request, 'user_otp_sign_in_validation.html')
 
